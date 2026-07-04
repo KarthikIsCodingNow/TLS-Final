@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>QuantumTree TLS - CAD Scanner Prototype</title>
+  <!-- Google Fonts: Rajdhani & Share Tech Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <!-- Vanilla CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Chart.js for grayscale stats -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- App Shell Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <i data-lucide="scan-line" class="brand-logo-icon"></i>
+        <div class="brand-text">
+          <span class="brand-title">QUANTUM.TLS</span>
+          <span class="brand-subtitle">PROTOTYPE V0.1</span>
+        </div>
+        <button id="btn-close-sidebar" class="btn-icon sidebar-close-btn" title="Close Menu">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <nav class="nav-menu">
+        <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>DASHBOARD</span>
+        </a>
+        <a href="#scanner" class="nav-item" data-tab="scanner">
+          <i data-lucide="crosshair"></i>
+          <span>LASER SCANNER</span>
+        </a>
+        <a href="#inventory" class="nav-item" data-tab="inventory">
+          <i data-lucide="clipboard-list"></i>
+          <span>TREE REGISTRY</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="gps-status-card">
+          <div class="gps-dot active"></div>
+          <div>
+            <div class="gps-title">GPS TELEMETRY</div>
+            <div class="gps-coord" id="gps-display">LOCATING...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left-group">
+          <!-- Retractable Hamburger Button -->
+          <button id="btn-toggle-sidebar" class="btn-icon toggle-menu-btn" title="Toggle Navigation Menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="header-title-container">
+            <h1 id="page-title">TELEMETRY DASHBOARD</h1>
+            <p id="page-subtitle">Monochrome raw spatial forest logs.</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="add-tree-shortcut-btn" class="btn btn-primary">
+            <i data-lucide="plus"></i>
+            <span>SCAN NEW TREE</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: DASHBOARD -->
+      <section id="dashboard-view" class="view-section active">
+        <!-- Overview Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">SCANNED TREES</span>
+              <h2 class="stat-value" id="stat-tree-count">0</h2>
+              <span class="stat-desc">Differentiated index records</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">TOTAL BIOMASS (AGB)</span>
+              <h2 class="stat-value"><span id="stat-total-biomass">0.0</span> <span class="unit">kg</span></h2>
+              <span class="stat-desc">Above ground dry mass</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">CO₂ OFFSET</span>
+              <h2 class="stat-value"><span id="stat-total-co2">0.0</span> <span class="unit">kg</span></h2>
+              <span class="stat-desc">Carbon dioxide equivalent absorbed</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">AVG CARBON DENSITY</span>
+              <h2 class="stat-value"><span id="stat-avg-co2">0.0</span> <span class="unit">kg/tree</span></h2>
+              <span class="stat-desc">Mean per-tree carbon offset</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+          <div class="dashboard-col main-panel card">
+            <div class="panel-header">
+              <h3>BIOMASS ACCUMULATION BY SPECIES</h3>
+              <p>Sum dry biomass per taxonomic family (kg AGB)</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="dashboardSpeciesChart"></canvas>
+            </div>
+          </div>
+
+          <div class="dashboard-col side-panel card">
+            <div class="panel-header">
+              <h3>ECOLOGICAL EQUIVALENTS</h3>
+              <p>CO₂ offset translation metrics.</p>
+            </div>
+            <div class="equivalents-list">
+              <div class="equivalent-item">
+                <div class="eq-icon-circle"><i data-lucide="car"></i></div>
+                <div class="eq-info">
+                  <span class="eq-val" id="eq-driving">0.0 km</span>
+                  <span class="eq-label">Driving distance offset</span>
+                </div>
+              </div>
+              <div class="equivalent-item">
+                <div class="eq-icon-circle"><i data-lucide="smartphone"></i></div>
+                <div class="eq-info">
+                  <span class="eq-val" id="eq-phones">0</span>
+                  <span class="eq-label">Smartphone charges saved</span>
+                </div>
+              </div>
+              <div class="equivalent-item">
+                <div class="eq-icon-circle"><i data-lucide="plane"></i></div>
+                <div class="eq-info">
+                  <span class="eq-val" id="eq-flights">0.000</span>
+                  <span class="eq-label">Short-haul flights offset</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Logs Section -->
+        <div class="card recent-logs-card">
+          <div class="panel-header flex-header">
+            <div>
+              <h3>RECENT INDEX ENTRIES</h3>
+              <p>Latest additions to the local registry</p>
+            </div>
+            <button class="btn btn-secondary text-btn" id="btn-goto-inventory">VIEW TREE REGISTRY</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="dashboard-recent-table">
+              <thead>
+                <tr>
+                  <th>TREE ID</th>
+                  <th>SPECIES</th>
+                  <th>HEIGHT (m)</th>
+                  <th>DBH (cm)</th>
+                  <th>AGB DRY WEIGHT (kg)</th>
+                  <th>CO₂ ABSORPTION (kg)</th>
+                  <th>COORDINATES (GPS)</th>
+                  <th>TIMESTAMP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="empty-row">
+                  <td colspan="8">No logs loaded. Go to the Laser Scanner to index a tree.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: LASER SCANNER -->
+      <section id="scanner-view" class="view-section">
+        <div class="scanner-layout">
+          
+          <!-- Column 1: Viewfinder (Left/Top) -->
+          <div class="scanner-viewport-wrapper">
+            <div class="card scanner-card">
+              
+              <div class="video-container" id="video-container">
+                <!-- Video Element -->
+                <video id="camera-feed" autoplay playsinline muted></video>
+                
+                <!-- Calipers Overlay Canvas -->
+                <canvas id="scanner-canvas"></canvas>
+
+                <!-- Rotating 3D LiDAR Canvas -->
+                <canvas id="lidar-canvas" style="display: none;"></canvas>
+
+                <!-- Overlaid HUD Controls (Overlaid on viewfinder) -->
+                <div class="hud-overlay" id="hud-overlay">
+                  
+                  <div class="center-crosshair"></div>
+                  <div class="laser-sweep"></div>
+                  
+                  <!-- Top telemetry tags -->
+                  <div class="hud-bar-top">
+                    <span id="hud-sys-status" class="blink">PROTOTYPE_ACTIVE</span>
+                    <span id="hud-active-mode-label">CLINOMETER</span>
+                  </div>
+
+                  <!-- Left Viewfinder Actions (Sensor alignment targets) -->
+                  <div class="hud-controls-left">
+                    <button class="hud-btn" id="btn-toggle-method" title="Switch Measurement Mode">
+                      <i data-lucide="ruler"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <div id="clinometer-controls-wrapper" style="display: flex; flex-direction: column; gap: 8px;">
+                      <button class="hud-btn" id="btn-lock-base" title="Lock Base Angle">
+                        <i data-lucide="anchor"></i>
+                        <span class="hud-btn-text"><span id="base-angle-val">--</span></span>
+                      </button>
+                      <button class="hud-btn" id="btn-lock-top" disabled title="Lock Top Angle">
+                        <i data-lucide="chevrons-up"></i>
+                        <span class="hud-btn-text"><span id="top-angle-val">--</span></span>
+                      </button>
+                      <button class="hud-btn" id="btn-reset-angles" title="Reset Tilt Angles">
+                        <i data-lucide="rotate-ccw"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Right Viewfinder Actions (Controls) -->
+                  <div class="hud-controls-right">
+                    <button class="hud-btn" id="btn-toggle-view" title="Toggle Camera / 3D LiDAR">
+                      <i data-lucide="rotate-3d"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <button class="hud-btn" id="btn-undo-calib" disabled title="Undo Guidelines Drag">
+                      <i data-lucide="undo-2"></i>
+                    </button>
+                    <button class="hud-btn active" id="btn-toggle-cv" title="Toggle CV Edges Filter">
+                      <i data-lucide="eye"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <button class="hud-btn btn-hud-primary" id="btn-save-tree" title="Save scan entry to registry">
+                      <i data-lucide="save"></i>
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- Fallback camera offline screen -->
+                <div class="camera-fallback" id="camera-fallback">
+                  <i data-lucide="image-plus" class="fallback-icon"></i>
+                  <h3>DEVICE CAMERA OFFLINE</h3>
+                  <p>Upload a tree image to calibrate coordinates and test guidelines.</p>
+                  <input type="file" id="image-upload" accept="image/*" class="file-input-hidden">
+                  <label for="image-upload" class="btn btn-secondary">UPLOAD SCENE IMAGE</label>
+                </div>
+
+              </div>
+
+              <!-- Viewfinder caption details -->
+              <div class="scanner-helper-instructions">
+                * DIRECT DRAG CALIPERS: Slide Trunk borders (L/R) and Tree limits (Top/Base) directly on the screen.
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Column 2: Data Panel (Right/Bottom - zero overlap on viewfinder) -->
+          <div class="scanner-data-panel card">
+            <div class="panel-header">
+              <h3>SCAN TELEMETRY & INPUTS</h3>
+              <p>Monospace telemetry outputs and wood classification settings</p>
+            </div>
+            
+            <!-- Metadata inputs -->
+            <div class="data-panel-inputs">
+              <div class="input-grid-row">
+                <div class="form-group">
+                  <label for="tree-name">Tree Tag ID</label>
+                  <input type="text" id="tree-name" placeholder="TR-001" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="tree-species">Wood Species</label>
+                  <select id="tree-species">
+                    <option value="Oak" data-density="0.75">Quercus (Oak)</option>
+                    <option value="Pine" data-density="0.45" selected>Pinus (Pine)</option>
+                    <option value="Maple" data-density="0.65">Acer (Maple)</option>
+                    <option value="Birch" data-density="0.60">Betula (Birch)</option>
+                    <option value="Eucalyptus" data-density="0.80">Eucalyptus</option>
+                    <option value="Teak" data-density="0.66">Teak</option>
+                    <option value="Custom" data-density="0.50">Custom...</option>
+                  </select>
+                </div>
+              </div>
+              
+              <!-- Custom Density Slider -->
+              <div class="form-group" id="custom-density-group" style="display: none;">
+                <div class="slider-label-row">
+                  <label for="custom-density">Custom Density (ρ)</label>
+                  <span class="slider-val"><span id="val-custom-density">0.50</span> g/cm³</span>
+                </div>
+                <input type="range" id="custom-density" min="0.1" max="1.2" step="0.01" value="0.50" class="hud-slider">
+              </div>
+
+              <!-- Mode Settings Wrapper -->
+              <div id="manual-distance-wrapper" style="display: none;">
+                <div class="form-group">
+                  <label for="manual-distance">Manual Distance (m)</label>
+                  <input type="number" id="manual-distance" value="5.0" step="0.5" min="1">
+                </div>
+              </div>
+              
+              <div id="reference-marker-wrapper" style="display: none;">
+                <div class="input-grid-row">
+                  <div class="form-group">
+                    <label for="reference-size">Marker Height (cm)</label>
+                    <input type="number" id="reference-size" value="29.7" step="0.5">
+                  </div>
+                  <div class="form-group">
+                    <label for="reference-dist">Est. Distance (m)</label>
+                    <input type="number" id="reference-dist" value="5.0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hud-divider" style="margin: 12px 0;"></div>
+
+            <!-- Mathematical telemetry outputs (Grayscale CAD printout format) -->
+            <div class="data-panel-stats">
+              <div class="stats-table">
+                <div class="stat-row">
+                  <span class="stat-lbl">TILT ANGLE (PITCH):</span>
+                  <span class="stat-val" id="hud-pitch">0.0°</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">CALCULATED RANGE (D):</span>
+                  <span class="stat-val" id="hud-dist">0.0m</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">ESTIMATED HEIGHT (H):</span>
+                  <span class="stat-val" id="hud-height">0.00m</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">TRUNK WIDTH (DBH):</span>
+                  <span class="stat-val" id="hud-dbh">0.0cm</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-lbl">DRY BIOMASS (AGB):</span>
+                  <span class="stat-val"><span id="live-agb">0.0</span> kg</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-lbl">CO₂ SEQUESTRATION:</span>
+                  <span class="stat-val"><span id="live-co2">0.0</span> kg</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 3: INVENTORY LOG -->
+      <section id="inventory-view" class="view-section">
+        <!-- Toolbar actions -->
+        <div class="card inventory-toolbar">
+          <div class="toolbar-search">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="inventory-search" placeholder="Search Tree ID or species...">
+          </div>
+          
+          <div class="toolbar-actions">
+            <select id="species-filter" class="filter-dropdown">
+              <option value="All">All Species</option>
+              <option value="Oak">Oak</option>
+              <option value="Pine">Pine</option>
+              <option value="Maple">Maple</option>
+              <option value="Birch">Birch</option>
+              <option value="Eucalyptus">Eucalyptus</option>
+              <option value="Teak">Teak</option>
+            </select>
+            
+            <button class="btn btn-secondary" id="btn-export-csv">
+              <i data-lucide="download"></i>
+              <span>EXPORT CSV</span>
+            </button>
+            <button class="btn btn-danger" id="btn-clear-inventory">
+              <i data-lucide="trash-2"></i>
+              <span>PURGE REGISTRY</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inventory List Table -->
+        <div class="card inventory-card">
+          <div class="table-responsive">
+            <table class="data-table" id="inventory-table">
+              <thead>
+                <tr>
+                  <th>THUMB</th>
+                  <th>TREE ID</th>
+                  <th>SPECIES</th>
+                  <th>HEIGHT (m)</th>
+                  <th>DBH (cm)</th>
+                  <th>AGB BIOMASS (kg)</th>
+                  <th>CO₂ OFFSET (kg)</th>
+                  <th>COORDINATES (GPS)</th>
+                  <th>TIMESTAMP</th>
+                  <th class="actions-col">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body">
+                <tr class="empty-row">
+                  <td colspan="10">No records found. Run a Laser Scan.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-nav">
+    <a href="#dashboard" class="mobile-nav-item active" data-tab="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>DASHBOARD</span>
+    </a>
+    <a href="#scanner" class="mobile-nav-item" data-tab="scanner">
+      <i data-lucide="crosshair"></i>
+      <span>SCANNER</span>
+    </a>
+    <a href="#inventory" class="mobile-nav-item" data-tab="inventory">
+      <i data-lucide="clipboard-list"></i>
+      <span>REGISTRY</span>
+    </a>
+  </nav>
+
+  <!-- Grayscale Detailed Modal Report -->
+  <div class="modal" id="tree-detail-modal">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2>SPATIAL SCAN DATA REPORT: <span id="modal-tree-id">TR-000</span></h2>
+        <button class="btn-close" id="btn-close-modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="modal-col">
+            <div class="modal-image-wrapper">
+              <img id="modal-tree-image" src="" alt="Tree Scan Frame">
+            </div>
+            <div class="gps-badge">
+              <i data-lucide="map-pin"></i>
+              <span id="modal-tree-gps">--</span>
+            </div>
+          </div>
+          
+          <div class="modal-col modal-details-column">
+            <div class="info-group-box">
+              <h3>CLASSIFICATION</h3>
+              <div class="details-spec-grid">
+                <div class="detail-row">
+                  <span class="detail-lbl">TAXONOMIC FAMILY:</span>
+                  <span class="detail-val" id="modal-tree-species">--</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-lbl">WOOD DRY DENSITY (ρ):</span>
+                  <span class="detail-val"><span id="modal-tree-density">--</span> g/cm³</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-group-box">
+              <h3>DIMENSIONS (CAD METRICS)</h3>
+              <div class="details-spec-grid">
+                <div class="detail-row">
+                  <span class="detail-lbl">CALCULATED HEIGHT:</span>
+                  <span class="detail-val" id="modal-tree-height">--</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-lbl">TRUNK DBH:</span>
+                  <span class="detail-val" id="modal-tree-dbh">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-group-box highlight-box">
+              <h3>ECOLOGICAL ANALYSIS</h3>
+              <div class="details-spec-grid">
+                <div class="detail-row">
+                  <span class="detail-lbl">DRY BIOMASS (AGB):</span>
+                  <span class="detail-val" id="modal-tree-agb">--</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-lbl">CARBON EQUIVALENT:</span>
+                  <span class="detail-val" id="modal-tree-co2">--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript entry point -->
+  <script src="app.js"></script>
+</body>
+</html>
