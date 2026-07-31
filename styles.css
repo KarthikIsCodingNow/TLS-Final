@@ -588,7 +588,9 @@ body {
 
 #camera-feed,
 #scanner-canvas,
-#lidar-canvas {
+#lidar-canvas,
+#auto-camera-feed,
+#auto-scanner-canvas {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -596,12 +598,14 @@ body {
   left: 0;
 }
 
-#camera-feed {
+#camera-feed,
+#auto-camera-feed {
   object-fit: fill; /* Skewing is resolved in JS by resizing the container height */
   z-index: 1;
 }
 
-#scanner-canvas {
+#scanner-canvas,
+#auto-scanner-canvas {
   z-index: 2;
   pointer-events: auto;
   cursor: crosshair;
@@ -1304,3 +1308,159 @@ select:focus {
     padding: 4px 8px !important;
   }
 }
+
+/* ==========================================================================
+   VIEW 4: AUTOMATIC AI TRACKER STYLES
+   ========================================================================== */
+.auto-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+.auto-loading-overlay .spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: auto-spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.auto-loading-overlay .loading-text {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.auto-loading-overlay .loading-subtext {
+  font-size: 11px;
+  color: var(--text-dimmed);
+}
+
+@keyframes auto-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* LiDAR Scanner Sweep animation */
+.laser-sweep-active {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(180deg, rgba(0, 255, 100, 0), rgba(0, 255, 100, 0.8));
+  box-shadow: 0 0 10px rgba(0, 255, 100, 0.8);
+  pointer-events: none;
+  z-index: 5;
+  animation: laser-sweep-anim 1.5s ease-in-out;
+}
+
+@keyframes laser-sweep-anim {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Device Orientation/LiDAR Notice Box */
+.sensor-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.sensor-dialog-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  max-width: 450px;
+  width: 90%;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.sensor-dialog-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.sensor-dialog-body {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.sensor-dialog-body strong {
+  color: var(--primary);
+}
+
+.sensor-dialog-body ol {
+  margin-left: 20px;
+  margin-top: 8px;
+}
+
+.sensor-dialog-body li {
+  margin-bottom: 4px;
+}
+
+.sensor-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Custom switch toggle styling */
+.switch input:checked + .slider {
+  background-color: var(--primary) !important;
+}
+
+.switch .slider::before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(14px);
+  background-color: #000000 !important;
+}
+

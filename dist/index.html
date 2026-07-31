@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PORTA-TLS - CAD Scanner Prototype</title>
+  <!-- Google Fonts: Rajdhani & Share Tech Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <!-- Vanilla CSS Stylesheet -->
+  <!-- Chart.js for grayscale stats -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- TensorFlow.js and COCO-SSD -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+  <script type="module" crossorigin src="/assets/index-DZi-lsAA.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-C42SFiUa.css">
+</head>
+<body>
+
+  <!-- App Shell Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <i data-lucide="scan-line" class="brand-logo-icon"></i>
+        <div class="brand-text">
+          <span class="brand-title">PORTA-TLS</span>
+          <span class="brand-subtitle">PROTOTYPE V2.0</span>
+        </div>
+        <button id="btn-close-sidebar" class="btn-icon sidebar-close-btn" title="Close Menu">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <nav class="nav-menu">
+        <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>DASHBOARD</span>
+        </a>
+        <a href="#scanner" class="nav-item" data-tab="scanner">
+          <i data-lucide="crosshair"></i>
+          <span>LASER SCANNER</span>
+        </a>
+        <a href="#automatic" class="nav-item" data-tab="automatic">
+          <i data-lucide="brain"></i>
+          <span>AUTO AI TRACKER</span>
+        </a>
+        <a href="#inventory" class="nav-item" data-tab="inventory">
+          <i data-lucide="clipboard-list"></i>
+          <span>TREE REGISTRY</span>
+        </a>
+        <a href="#calibration" class="nav-item" data-tab="calibration">
+          <i data-lucide="sliders"></i>
+          <span>CALIBRATION</span>
+        </a>
+        <a href="#validation" class="nav-item" data-tab="validation">
+          <i data-lucide="shield-alert"></i>
+          <span>VALIDATION</span>
+        </a>
+        <a href="#inventions" class="nav-item" data-tab="inventions">
+          <i data-lucide="award"></i>
+          <span>INVENTIONS</span>
+        </a>
+        <a href="#intelligence" class="nav-item" data-tab="intelligence">
+          <i data-lucide="cpu"></i>
+          <span>AFIE INTELLIGENCE</span>
+        </a>
+        <a href="#enterprise" class="nav-item" data-tab="enterprise">
+          <i data-lucide="building"></i>
+          <span>ENTERPRISE</span>
+        </a>
+        <a href="#patent" class="nav-item" data-tab="patent">
+          <i data-lucide="file-check"></i>
+          <span>PATENT & INNOVATION</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="gps-status-card">
+          <div class="gps-dot active"></div>
+          <div>
+            <div class="gps-title">GPS TELEMETRY</div>
+            <div class="gps-coord" id="gps-display">LOCATING...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left-group">
+          <!-- Retractable Hamburger Button -->
+          <button id="btn-toggle-sidebar" class="btn-icon toggle-menu-btn" title="Toggle Navigation Menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="header-title-container">
+            <h1 id="page-title">TELEMETRY DASHBOARD</h1>
+            <p id="page-subtitle">Monochrome raw spatial forest logs.</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="validation-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-right: 15px; font-family: 'Share Tech Mono'; font-size: 13px; color: #ffffff;">
+            <span>VALIDATION MODE</span>
+            <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px;">
+              <input type="checkbox" id="chk-validation-mode" style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border: 1px solid var(--border-color); border-radius: 20px;"></span>
+            </label>
+          </div>
+          <div class="research-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-right: 15px; font-family: 'Share Tech Mono'; font-size: 13px; color: #ffffff;">
+            <span>RESEARCH MODE</span>
+            <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px;">
+              <input type="checkbox" id="chk-research-mode" style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border: 1px solid var(--border-color); border-radius: 20px;"></span>
+            </label>
+          </div>
+          <button id="add-tree-shortcut-btn" class="btn btn-primary">
+            <i data-lucide="plus"></i>
+            <span>SCAN NEW TREE</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: DASHBOARD -->
+      <section id="dashboard-view" class="view-section active">
+        <!-- Overview Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">SCANNED TREES</span>
+              <h2 class="stat-value" id="stat-tree-count">0</h2>
+              <span class="stat-desc">Differentiated index records</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">TOTAL BIOMASS (AGB)</span>
+              <h2 class="stat-value"><span id="stat-total-biomass">0.0</span> <span class="unit">kg</span></h2>
+              <span class="stat-desc">Above ground dry mass</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">CO₂ OFFSET</span>
+              <h2 class="stat-value"><span id="stat-total-co2">0.0</span> <span class="unit">kg</span></h2>
+              <span class="stat-desc">Carbon dioxide equivalent absorbed</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <span class="stat-label">AVG CARBON DENSITY</span>
+              <h2 class="stat-value"><span id="stat-avg-co2">0.0</span> <span class="unit">kg/tree</span></h2>
+              <span class="stat-desc">Mean per-tree carbon offset</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout">
+          <div class="dashboard-col main-panel card">
+            <div class="panel-header">
+              <h3>BIOMASS ACCUMULATION BY SPECIES</h3>
+              <p>Sum dry biomass per taxonomic family (kg AGB)</p>
+            </div>
+            <div class="chart-container">
+              <canvas id="dashboardSpeciesChart"></canvas>
+            </div>
+          </div>
+
+          <div class="dashboard-col side-panel card">
+            <div class="panel-header">
+              <h3>ECOLOGICAL EQUIVALENTS</h3>
+              <p>CO₂ offset translation metrics.</p>
+            </div>
+            <div class="equivalents-list">
+              <div class="equivalent-item">
+                <div class="eq-icon-circle"><i data-lucide="car"></i></div>
+                <div class="eq-info">
+                  <span class="eq-val" id="eq-driving">0.0 km</span>
+                  <span class="eq-label">Driving distance offset</span>
+                </div>
+              </div>
+              <div class="equivalent-item">
+                <div class="eq-icon-circle"><i data-lucide="smartphone"></i></div>
+                <div class="eq-info">
+                  <span class="eq-val" id="eq-phones">0</span>
+                  <span class="eq-label">Smartphone charges saved</span>
+                </div>
+              </div>
+              <div class="equivalent-item">
+                <div class="eq-icon-circle"><i data-lucide="plane"></i></div>
+                <div class="eq-info">
+                  <span class="eq-val" id="eq-flights">0.000</span>
+                  <span class="eq-label">Short-haul flights offset</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Logs Section -->
+        <div class="card recent-logs-card">
+          <div class="panel-header flex-header">
+            <div>
+              <h3>RECENT INDEX ENTRIES</h3>
+              <p>Latest additions to the local registry</p>
+            </div>
+            <button class="btn btn-secondary text-btn" id="btn-goto-inventory">VIEW TREE REGISTRY</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="dashboard-recent-table">
+              <thead>
+                <tr>
+                  <th>TREE ID</th>
+                  <th>SPECIES</th>
+                  <th>HEIGHT (m)</th>
+                  <th>DBH (cm)</th>
+                  <th>AGB DRY WEIGHT (kg)</th>
+                  <th>CO₂ ABSORPTION (kg)</th>
+                  <th>COORDINATES (GPS)</th>
+                  <th>TIMESTAMP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="empty-row">
+                  <td colspan="8">No logs loaded. Go to the Laser Scanner to index a tree.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: LASER SCANNER -->
+      <section id="scanner-view" class="view-section">
+        <div class="scanner-layout">
+          
+          <!-- Column 1: Viewfinder (Left/Top) -->
+          <div class="scanner-viewport-wrapper">
+            <div class="card scanner-card">
+              
+              <div class="video-container" id="video-container">
+                <!-- Video Element -->
+                <video id="camera-feed" autoplay playsinline muted></video>
+                
+                <!-- Calipers Overlay Canvas -->
+                <canvas id="scanner-canvas"></canvas>
+
+                <!-- Rotating 3D LiDAR Canvas -->
+                <canvas id="lidar-canvas" style="display: none;"></canvas>
+
+                <!-- Overlaid HUD Controls (Overlaid on viewfinder) -->
+                <div class="hud-overlay" id="hud-overlay">
+                  
+                  <div class="center-crosshair"></div>
+                  <div class="laser-sweep"></div>
+                  
+                  <!-- Top telemetry tags -->
+                  <div class="hud-bar-top">
+                    <span id="hud-sys-status" class="blink">PROTOTYPE_ACTIVE</span>
+                    <span id="hud-active-mode-label">CLINOMETER</span>
+                  </div>
+
+                  <!-- Left Viewfinder Actions (Sensor alignment targets) -->
+                  <div class="hud-controls-left">
+                    <button class="hud-btn" id="btn-toggle-method" title="Switch Measurement Mode">
+                      <i data-lucide="ruler"></i>
+                    </button>
+                    
+                    <!-- Quick adjustment of override distance -->
+                    <button class="hud-btn" id="btn-hud-override-dist" style="display: none;" title="Adjust Estimated Distance">
+                      <i data-lucide="ruler"></i>
+                      <span class="hud-btn-text"><span id="hud-override-dist-val">5.0</span>m</span>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <div id="clinometer-controls-wrapper" style="display: flex; flex-direction: column; gap: 8px;">
+                      <button class="hud-btn" id="btn-lock-base" title="Lock Base Angle">
+                        <i data-lucide="anchor"></i>
+                        <span class="hud-btn-text"><span id="base-angle-val">--</span></span>
+                      </button>
+                      <button class="hud-btn" id="btn-lock-top" disabled title="Lock Top Angle">
+                        <i data-lucide="chevrons-up"></i>
+                        <span class="hud-btn-text"><span id="top-angle-val">--</span></span>
+                      </button>
+                      <button class="hud-btn" id="btn-reset-angles" title="Reset Tilt Angles">
+                        <i data-lucide="rotate-ccw"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Right Viewfinder Actions (Controls) -->
+                  <div class="hud-controls-right">
+                    <button class="hud-btn" id="btn-toggle-view" title="Toggle Camera / 3D LiDAR">
+                      <i data-lucide="rotate-3d"></i>
+                    </button>
+                    
+                    <button class="hud-btn" id="btn-hud-lidar" title="LiDAR Depth Scanner">
+                      <i data-lucide="radar"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <button class="hud-btn" id="btn-undo-calib" disabled title="Undo Guidelines Drag">
+                      <i data-lucide="undo-2"></i>
+                    </button>
+                    <button class="hud-btn active" id="btn-toggle-cv" title="Toggle CV Edges Filter">
+                      <i data-lucide="eye"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <button class="hud-btn btn-hud-primary" id="btn-save-tree" title="Save scan entry to registry">
+                      <i data-lucide="save"></i>
+                    </button>
+                  </div>
+
+                  <!-- Guidance Coaching Banner -->
+                  <div class="hud-guidance-banner" id="hud-guidance-alerts" style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 0, 0.85); color: white; padding: 4px 10px; font-family: 'Share Tech Mono'; font-size: 11px; text-transform: uppercase; border-radius: 4px; pointer-events: none; display: none; box-shadow: 0 0 6px rgba(0,0,0,0.5); z-index: 10;">
+                    HOLD STEADY
+                  </div>
+
+                </div>
+
+                <!-- Fallback camera offline screen -->
+                <div class="camera-fallback" id="camera-fallback">
+                  <i data-lucide="image-plus" class="fallback-icon"></i>
+                  <h3>DEVICE CAMERA OFFLINE</h3>
+                  <p>Upload a tree image to calibrate coordinates and test guidelines.</p>
+                  <input type="file" id="image-upload" accept="image/*" class="file-input-hidden">
+                  <label for="image-upload" class="btn btn-secondary">UPLOAD SCENE IMAGE</label>
+                </div>
+
+              </div>
+
+              <!-- Viewfinder caption details -->
+              <div class="scanner-helper-instructions">
+                * DIRECT DRAG CALIPERS: Slide Trunk borders (L/R) and Tree limits (Top/Base) directly on the screen.
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Column 2: Data Panel (Right/Bottom - zero overlap on viewfinder) -->
+          <div class="scanner-data-panel card">
+            <div class="panel-header">
+              <h3>SCAN TELEMETRY & INPUTS</h3>
+              <p>Monospace telemetry outputs and wood classification settings</p>
+            </div>
+            
+            <!-- Metadata inputs -->
+            <div class="data-panel-inputs">
+              <div class="input-grid-row">
+                <div class="form-group">
+                  <label for="tree-name">Tree Tag ID</label>
+                  <input type="text" id="tree-name" placeholder="TR-001" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="tree-species">Wood Species</label>
+                  <select id="tree-species">
+                    <option value="Oak" data-density="0.75">Quercus (Oak)</option>
+                    <option value="Pine" data-density="0.45" selected>Pinus (Pine)</option>
+                    <option value="Maple" data-density="0.65">Acer (Maple)</option>
+                    <option value="Birch" data-density="0.60">Betula (Birch)</option>
+                    <option value="Eucalyptus" data-density="0.80">Eucalyptus</option>
+                    <option value="Teak" data-density="0.66">Teak</option>
+                    <option value="Custom" data-density="0.50">Custom...</option>
+                  </select>
+                </div>
+              </div>
+              
+              <!-- Custom Density Slider -->
+              <div class="form-group" id="custom-density-group" style="display: none;">
+                <div class="slider-label-row">
+                  <label for="custom-density">Custom Density (ρ)</label>
+                  <span class="slider-val"><span id="val-custom-density">0.50</span> g/cm³</span>
+                </div>
+                <input type="range" id="custom-density" min="0.1" max="1.2" step="0.01" value="0.50" class="hud-slider">
+              </div>
+
+              <!-- Validation Ground Truth Inputs -->
+              <div id="validation-gt-wrapper" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 12px;">
+                <h4 style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; margin: 0 0 6px 0; color: var(--accent-color);">GROUND TRUTH REFERENCES</h4>
+                <div class="form-group">
+                  <label for="val-gt-height">Manual Tape Height (m)</label>
+                  <input type="number" id="val-gt-height" value="0.0" step="0.1" min="0.0" style="width:100%;">
+                </div>
+                <div class="form-group" style="margin-top: 8px;">
+                  <label for="val-gt-dbh">Manual Tape DBH (cm)</label>
+                  <input type="number" id="val-gt-dbh" value="0.0" step="0.1" min="0.0" style="width:100%;">
+                </div>
+              </div>
+
+              <!-- Mode Settings Wrapper -->
+              <div id="clinometer-settings-wrapper" style="display: block;">
+                <div class="form-group">
+                  <label for="camera-height">Camera Height (m)</label>
+                  <input type="number" id="camera-height" value="1.5" step="0.1" min="0.5" max="3.0">
+                </div>
+                <!-- Ground Slope Correction Input -->
+                <div class="form-group" style="margin-top: 10px;">
+                  <label for="ground-slope">Ground Slope Angle (deg)</label>
+                  <input type="number" id="ground-slope" value="0.0" step="0.5" min="-45.0" max="45.0">
+                </div>
+                <!-- Override Distance Settings -->
+                <div class="form-group" style="margin-top: 10px;">
+                  <div class="checkbox-row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <input type="checkbox" id="chk-override-dist">
+                    <label for="chk-override-dist" style="margin: 0; font-size: 13px; font-weight: 600; cursor: pointer;">Enable Distance Override</label>
+                  </div>
+                  <div id="override-dist-input-wrapper" style="display: none; padding-left: 20px;">
+                    <label for="inp-override-dist" style="font-size: 11px; color: var(--text-dimmed);">Estimated Distance (m)</label>
+                    <input type="number" id="inp-override-dist" value="5.0" step="0.1" min="0.5" max="100.0" style="width: 100%;">
+                  </div>
+                </div>
+              </div>
+
+              <div id="manual-distance-wrapper" style="display: none;">
+                <div class="form-group">
+                  <label for="manual-distance">Manual Distance (m)</label>
+                  <input type="number" id="manual-distance" value="5.0" step="0.5" min="1">
+                </div>
+              </div>
+              
+              <div id="reference-marker-wrapper" style="display: none;">
+                <div class="input-grid-row">
+                  <div class="form-group">
+                    <label for="reference-size">Marker Height (cm)</label>
+                    <input type="number" id="reference-size" value="29.7" step="0.5">
+                  </div>
+                  <div class="form-group">
+                    <label for="reference-dist">Est. Distance (m)</label>
+                    <input type="number" id="reference-dist" value="5.0" step="0.5">
+                  </div>
+                </div>
+              </div>
+
+              <!-- LiDAR Import Controls -->
+              <div id="lidar-upload-wrapper" style="display: none;">
+                <div class="form-group" style="margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                  <label for="lidar-file">Import Apple Pro LiDAR Scan (.xyz, .csv, .txt, .ply)</label>
+                  <input type="file" id="lidar-file" accept=".xyz,.csv,.txt,.ply" class="file-input-hidden">
+                  <label for="lidar-file" class="btn btn-secondary" style="width: 100%; text-align: center; justify-content: center; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 4px;">
+                    <i data-lucide="upload"></i>
+                    <span>IMPORT LIDAR SCAN</span>
+                  </label>
+                  <button class="btn btn-secondary" id="btn-reset-lidar" style="width: 100%; margin-top: 8px; font-size: 11px; text-align: center; justify-content: center; display: inline-flex; align-items: center; gap: 8px;">
+                    <i data-lucide="rotate-ccw"></i>
+                    <span>RESET TO SIMULATED TREE</span>
+                  </button>
+                  <div id="lidar-file-status" style="font-size: 11px; font-family: monospace; color: var(--text-dimmed); margin-top: 6px; text-align: center;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hud-divider" style="margin: 12px 0;"></div>
+
+            <!-- Mathematical telemetry outputs (Grayscale CAD printout format) -->
+            <div class="data-panel-stats">
+              <div class="stats-table">
+                <div class="stat-row">
+                  <span class="stat-lbl">TILT ANGLE (PITCH):</span>
+                  <span class="stat-val" id="hud-pitch">0.0°</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">CALCULATED RANGE (D):</span>
+                  <span class="stat-val" id="hud-dist">0.0m</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">ESTIMATED HEIGHT (H):</span>
+                  <span class="stat-val" id="hud-height">0.00m</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">TRUNK WIDTH (DBH):</span>
+                  <span class="stat-val" id="hud-dbh">0.0cm</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-lbl">DRY BIOMASS (AGB):</span>
+                  <span class="stat-val"><span id="live-agb">0.0</span> kg</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-lbl">CO₂ SEQUESTRATION:</span>
+                  <span class="stat-val"><span id="live-co2">0.0</span> kg</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pitch Filter Selector -->
+            <div class="form-group" style="margin: 12px 16px;">
+              <label for="pitch-filter-mode">IMU Pitch Stabilizer Filter</label>
+              <select id="pitch-filter-mode" style="width: 100%;">
+                <option value="raw">None (Raw Sensor)</option>
+                <option value="moving_average">Moving Average (N=10)</option>
+                <option value="median">Median Rejection (N=9)</option>
+                <option value="low_pass">Low-Pass Filter (alpha=0.15)</option>
+                <option value="kalman" selected>1D Kalman Filter (Adaptive)</option>
+              </select>
+            </div>
+
+            <!-- Multi-Frame Burst Sampling -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label for="sample-frame-count">Multi-Frame Burst Averaging</label>
+              <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <select id="sample-frame-count" style="flex: 1;">
+                  <option value="1">1 Frame (Instant)</option>
+                  <option value="20">20 Frames Burst</option>
+                  <option value="30" selected>30 Frames Burst</option>
+                  <option value="50">50 Frames Burst</option>
+                </select>
+                <button class="btn btn-secondary" id="btn-trigger-sampling" style="font-size: 11px; font-weight: 600;">CAPTURE BURST</button>
+              </div>
+              <div id="sampling-progress-container" style="display: none; margin-top: 8px;">
+                <div style="font-size: 11px; font-family: monospace; color: var(--accent-color); display: flex; justify-content: space-between;">
+                  <span>ACQUIRING SAMPLES...</span>
+                  <span id="sampling-progress-pct">0%</span>
+                </div>
+                <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.1); margin-top: 4px; border: 1px solid var(--border-color);">
+                  <div id="sampling-progress-bar" style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.1s;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Task 9 Hardware Device Preset Selector -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label for="sel-device-preset">Hardware Device Profile</label>
+              <select id="sel-device-preset" style="width: 100%;">
+                <option value="iphone_15_pro">Apple iPhone 14/15/16 Pro (65.4° HFOV)</option>
+                <option value="pixel_8_pro">Google Pixel 7/8/9 Pro (66.8° HFOV)</option>
+                <option value="galaxy_s24">Samsung Galaxy S23/S24 (64.8° HFOV)</option>
+                <option value="ipad_pro_lidar">Apple iPad Pro LiDAR (62.0° HFOV)</option>
+                <option value="standard_mobile" selected>Standard Mobile Camera (60.0° HFOV)</option>
+              </select>
+            </div>
+
+            <!-- Task 9 Published Allometric Biomass Model Selector -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label for="sel-biomass-model">Allometric Biomass Equation</label>
+              <select id="sel-biomass-model" style="width: 100%;">
+                <option value="chave2014" selected>Chave et al. (2014) Pantropical Model</option>
+                <option value="jenkins2003">Jenkins et al. (2003) Hardwood/Softwood</option>
+                <option value="brown1997">Brown et al. (1997) Tropical Moist Model</option>
+              </select>
+            </div>
+
+            <!-- Task 9 Adaptive DBH Geometry Selector -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label for="sel-dbh-geometry">Trunk Cross-Section Geometry</label>
+              <select id="sel-dbh-geometry" style="width: 100%;">
+                <option value="circular" selected>Circular Cylinder (D = W)</option>
+                <option value="elliptical">Elliptical Trunk (D = √(D1·D2))</option>
+                <option value="irregular">Irregular Trunk (D = (D1+D2)/2)</option>
+                <option value="multistem">Multi-Stem Fork (D = √(ΣD_i²))</option>
+              </select>
+            </div>
+
+            <!-- Task 9 Operating Measurement Mode Selector -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label for="sel-measurement-mode">Measurement Execution Mode</label>
+              <select id="sel-measurement-mode" style="width: 100%;">
+                <option value="fast">Fast Mode (1 Frame Rapid)</option>
+                <option value="balanced" selected>Balanced Mode (3 Frames Moving Avg)</option>
+                <option value="high_accuracy">High Accuracy Mode (5 Frames Precision)</option>
+                <option value="research">Research Mode (10 Frames Logging)</option>
+              </select>
+            </div>
+
+            <!-- Edge Kernel Selector -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label for="edge-kernel-select">CV Edge Convolution Kernel</label>
+              <select id="edge-kernel-select" style="width: 100%;">
+                <option value="advanced" selected>Advanced Canny + Sobel Pipeline</option>
+                <option value="sobel">Sobel 3x3 Filter</option>
+                <option value="scharr">Scharr 3x3 Filter</option>
+                <option value="prewitt">Prewitt 3x3 Filter</option>
+                <option value="canny">Canny Hysteresis</option>
+                <option value="adaptive">Adaptive Threshold</option>
+              </select>
+            </div>
+
+            <!-- Task 8 Extension: Auto Caliper Snap Controls -->
+            <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-family: monospace; font-size: 11px; color: #ffffff;">
+                <input type="checkbox" id="chk-auto-caliper-snap" checked>
+                <span>AUTOMATIC CALIPER SNAPPING (AI)</span>
+              </label>
+            </div>
+
+            <!-- Collapsible developer diagnostics panel -->
+            <div class="diagnostics-wrapper" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+              <h4 style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; margin: 0 0 6px 0; cursor: pointer; display: flex; justify-content: space-between;" id="toggle-diagnostics">
+                <span>SYSTEM DIAGNOSTICS</span>
+                <span id="diagnostics-chevron">[+]</span>
+              </h4>
+              <div id="diagnostics-content" style="display: none; font-family: 'Share Tech Mono'; font-size: 11px; line-height: 1.5; color: var(--text-dimmed); background: rgba(255,255,255,0.02); padding: 8px; border: 1px solid var(--border-color); margin-top: 4px;">
+                <div style="display: flex; justify-content: space-between;"><span>CAMERA FPS:</span><span id="diag-cam-fps">0</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>INFERENCE FPS:</span><span id="diag-ai-fps">0</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>RAW IMU TILT:</span><span id="diag-raw-pitch">0.0°</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>FILTERED IMU:</span><span id="diag-filt-pitch">0.0°</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>ACTIVE ENGINE:</span><span id="diag-active-engine">clinometer</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>CALIBRATED HFOV:</span><span id="diag-calib-hfov">60.0°</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>CALIBRATED VFOV:</span><span id="diag-calib-vfov">45.0°</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>DISTANCE ± ERR:</span><span id="diag-dist-err">0.0m ± 0.0m</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>HEIGHT ± ERR:</span><span id="diag-height-err">0.00m ± 0.00m</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>DBH ± ERR:</span><span id="diag-dbh-err">0.0cm ± 0.0cm</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>AGB ± ERR:</span><span id="diag-agb-err">0.0kg ± 0.0kg</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>LIVE SENS STABILITY:</span><span id="diag-sens-stability" style="color:var(--accent-color);">Excellent Stability</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>ANGLE QUALITY:</span><span id="diag-angle-quality" style="color:var(--accent-color);">Green (Optimal)</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>LIGHTING / SHARPNESS:</span><span id="diag-lighting-sharpness">Good / Sharp</span></div>
+                
+                <div style="border-top: 1px dashed var(--border-color); margin: 8px 0; padding-top: 8px; font-weight: bold; color: #ffffff;">VARIANCE SENSITIVITY BREAKDOWN</div>
+                <div style="display: flex; justify-content: space-between;"><span>• DISTANCE ERROR:</span><span id="sens-dist-pct">48%</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>• PITCH ANGLE ERROR:</span><span id="sens-pitch-pct">22%</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>• OPTICS HFOV ERROR:</span><span id="sens-hfov-pct">17%</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>• MANUAL ALIGNMENT:</span><span id="sens-align-pct">13%</span></div>
+                
+                <div style="border-top: 1px dashed var(--border-color); margin: 8px 0; padding-top: 8px; font-weight: bold; color: #ffffff;">VISUAL DEBUG OVERLAYS</div>
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-quality-overlay" checked> <span>REAL-TIME QUALITY OVERLAY</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-mask" checked> <span>TRUNK SEGMENTATION MASK</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-edges" checked> <span>CONTOUR EDGES</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-centerline" checked> <span>FITTED CENTERLINE</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-poly" checked> <span>BOUNDING POLYGON</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-points" checked> <span>BASE & TOP POINTS</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-quality-map" checked> <span>QUALITY RELIABILITY MAP</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
+                    <input type="checkbox" id="chk-dbg-tracking" checked> <span>TRACKING VECTORS</span>
+                  </label>
+                </div>
+
+                <button class="btn btn-secondary" id="btn-export-diagnostics" style="width: 100%; font-size: 10px; height: 22px; padding: 0; margin-top: 8px;">EXPORT RAW TELEMETRY JSON</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- AMSFE Adaptive Multi-Sensor Fusion Engine Panel Container -->
+        <div id="amsfe-workspace-container" style="margin-top: 20px;"></div>
+
+        <!-- CEPE Confidence & Error Prediction Engine Quality Report Container -->
+        <div id="cepe-quality-report-container" style="margin-top: 20px;"></div>
+
+        <!-- CMME Consensus Multi-Frame Measurement Engine Dashboard Container -->
+        <div id="cmme-dashboard-container" style="margin-top: 20px;"></div>
+
+        <!-- AFIE Adaptive Forestry Intelligence Engine Dashboard Container -->
+        <div id="afie-dashboard-container" style="margin-top: 20px;"></div>
+      </section>
+
+      <!-- VIEW 4: AUTOMATIC AI TRACKER -->
+      <section id="automatic-view" class="view-section">
+        <div class="scanner-layout">
+          
+          <!-- Column 1: Viewfinder (Left/Top) -->
+          <div class="scanner-viewport-wrapper">
+            <div class="card scanner-card">
+              
+              <div class="video-container" id="auto-video-container">
+                <!-- Video Element -->
+                <video id="auto-camera-feed" autoplay playsinline muted></video>
+                
+                <!-- Bounding Box & Calipers Overlay Canvas -->
+                <canvas id="auto-scanner-canvas"></canvas>
+
+                <!-- Overlaid HUD Controls -->
+                <div class="hud-overlay" id="auto-hud-overlay">
+                  
+                  <div class="center-crosshair"></div>
+                  <div class="laser-sweep" id="auto-laser-sweep" style="display: none;"></div>
+                  
+                  <!-- Top telemetry tags -->
+                  <div class="hud-bar-top">
+                    <span id="auto-hud-sys-status" class="blink">AI_TRACKER_ACTIVE</span>
+                    <span id="auto-hud-active-mode-label">AUTO TRACKING</span>
+                  </div>
+
+                  <!-- Left Viewfinder Actions (AI Controls) -->
+                  <div class="hud-controls-left">
+                    <button class="hud-btn active" id="btn-auto-toggle-tracking" title="Toggle Auto-Tracking">
+                      <i data-lucide="play"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <!-- Quick adjustment of override distance -->
+                    <button class="hud-btn" id="btn-auto-hud-dist" title="Quick Adjust Distance">
+                      <i data-lucide="ruler"></i>
+                      <span class="hud-btn-text"><span id="auto-hud-override-dist-val">5.0</span>m</span>
+                    </button>
+                  </div>
+
+                  <!-- Right Viewfinder Actions (Controls) -->
+                  <div class="hud-controls-right">
+                    <button class="hud-btn" id="btn-auto-hud-lidar" title="LiDAR Depth Scanner">
+                      <i data-lucide="radar"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <button class="hud-btn active" id="btn-auto-toggle-cv" title="Toggle CV Edges Filter">
+                      <i data-lucide="eye"></i>
+                    </button>
+                    
+                    <div class="hud-divider"></div>
+                    
+                    <button class="hud-btn btn-hud-primary" id="btn-auto-save-tree" title="Save scan entry to registry">
+                      <i data-lucide="save"></i>
+                    </button>
+                  </div>
+
+                  <!-- AI Loading Overlay -->
+                  <div id="auto-loading-overlay" class="auto-loading-overlay">
+                    <div class="spinner"></div>
+                    <div class="loading-text">INITIALIZING AI MODELS...</div>
+                    <div class="loading-subtext">Loading TensorFlow.js COCO-SSD</div>
+                  </div>
+
+                </div>
+
+                <!-- Fallback camera offline screen -->
+                <div class="camera-fallback" id="auto-camera-fallback">
+                  <i data-lucide="image-plus" class="fallback-icon"></i>
+                  <h3>AI CAMERA OFFLINE</h3>
+                  <p>Open this page via HTTPS on mobile to activate the camera scanner.</p>
+                </div>
+
+              </div>
+
+              <!-- Viewfinder caption details -->
+              <div class="scanner-helper-instructions">
+                * AUTO RECOGNITION: Tap on any detected box to track and auto-calculate its height & DBH.
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Column 2: Data Panel (Right/Bottom) -->
+          <div class="scanner-data-panel card">
+            <div class="panel-header">
+              <h3>AI SCAN TELEMETRY & INPUTS</h3>
+              <p>Object tracking telemetry and calibration logs</p>
+            </div>
+            
+            <!-- Metadata inputs -->
+            <div class="data-panel-inputs">
+              <div class="input-grid-row">
+                <div class="form-group">
+                  <label for="auto-tree-name">Tree Tag ID</label>
+                  <input type="text" id="auto-tree-name" placeholder="AUTR-001" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="auto-tree-species">Wood Species</label>
+                  <select id="auto-tree-species">
+                    <option value="Oak" data-density="0.75">Quercus (Oak)</option>
+                    <option value="Pine" data-density="0.45" selected>Pinus (Pine)</option>
+                    <option value="Maple" data-density="0.65">Acer (Maple)</option>
+                    <option value="Birch" data-density="0.60">Betula (Birch)</option>
+                    <option value="Eucalyptus" data-density="0.80">Eucalyptus</option>
+                    <option value="Teak" data-density="0.66">Teak</option>
+                    <option value="Custom" data-density="0.50">Custom...</option>
+                  </select>
+                </div>
+              </div>
+              
+              <!-- Custom Density Slider -->
+              <div class="form-group" id="auto-custom-density-group" style="display: none;">
+                <div class="slider-label-row">
+                  <label for="auto-custom-density">Custom Density (ρ)</label>
+                  <span class="slider-val"><span id="auto-val-custom-density">0.50</span> g/cm³</span>
+                </div>
+                <input type="range" id="auto-custom-density" min="0.1" max="1.2" step="0.01" value="0.50" class="hud-slider">
+              </div>
+
+              <!-- AI Targets and Configuration -->
+              <div class="input-grid-row">
+                <div class="form-group">
+                  <label for="auto-target-filter">Target Recognition Filter</label>
+                  <select id="auto-target-filter">
+                    <option value="trees" selected>Trees & Plants Only</option>
+                    <option value="all">All Objects</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="auto-camera-height">Camera Height (m)</label>
+                  <input type="number" id="auto-camera-height" value="1.5" step="0.1" min="0.5" max="3.0">
+                </div>
+              </div>
+
+              <!-- Min Confidence Threshold Slider -->
+              <div class="form-group" style="margin-top: 10px;">
+                <div class="slider-label-row">
+                  <label for="auto-confidence">Min AI Detection Confidence</label>
+                  <span class="slider-val"><span id="val-auto-confidence">20</span>%</span>
+                </div>
+                <input type="range" id="auto-confidence" min="10" max="90" step="5" value="20" class="hud-slider">
+              </div>
+
+              <!-- Override Distance Settings -->
+              <div class="form-group" style="margin-top: 10px;">
+                <div class="checkbox-row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <input type="checkbox" id="auto-chk-override-dist" checked>
+                  <label for="auto-chk-override-dist" style="margin: 0; font-size: 13px; font-weight: 600; cursor: pointer;">Enable Distance Override</label>
+                </div>
+                <div id="auto-override-dist-input-wrapper" style="display: block; padding-left: 20px;">
+                  <label for="auto-inp-override-dist" style="font-size: 11px; color: var(--text-dimmed);">Estimated Distance (m)</label>
+                  <input type="number" id="auto-inp-override-dist" value="5.0" step="0.1" min="0.5" max="100.0" style="width: 100%;">
+                </div>
+              </div>
+            </div>
+
+            <div class="hud-divider" style="margin: 12px 0;"></div>
+
+            <!-- Mathematical telemetry outputs -->
+            <div class="data-panel-stats">
+              <div class="stats-table">
+                <div class="stat-row">
+                  <span class="stat-lbl">TRACKED CLASS:</span>
+                  <span class="stat-val" id="auto-hud-class" style="color: var(--accent-color); font-weight: bold;">NONE</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">CALCULATED RANGE (D):</span>
+                  <span class="stat-val" id="auto-hud-dist">0.0m</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">ESTIMATED HEIGHT (H):</span>
+                  <span class="stat-val" id="auto-hud-height">0.00m</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-lbl">TRUNK WIDTH (DBH):</span>
+                  <span class="stat-val" id="auto-hud-dbh">0.0cm</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-lbl">DRY BIOMASS (AGB):</span>
+                  <span class="stat-val"><span id="auto-live-agb">0.0</span> kg</span>
+                </div>
+                <div class="stat-row highlight">
+                  <span class="stat-lbl">CO₂ SEQUESTRATION:</span>
+                  <span class="stat-val"><span id="auto-live-co2">0.0</span> kg</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 3: INVENTORY LOG -->
+      <section id="inventory-view" class="view-section">
+        <!-- Toolbar actions -->
+        <div class="card inventory-toolbar">
+          <div class="toolbar-search">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="inventory-search" placeholder="Search Tree ID or species...">
+          </div>
+          
+          <div class="toolbar-actions">
+            <select id="species-filter" class="filter-dropdown">
+              <option value="All">All Species</option>
+              <option value="Oak">Oak</option>
+              <option value="Pine">Pine</option>
+              <option value="Maple">Maple</option>
+              <option value="Birch">Birch</option>
+              <option value="Eucalyptus">Eucalyptus</option>
+              <option value="Teak">Teak</option>
+            </select>
+            
+            <button class="btn btn-secondary" id="btn-export-csv">
+              <i data-lucide="download"></i>
+              <span>EXPORT CSV</span>
+            </button>
+            <button class="btn btn-secondary" id="btn-export-geojson">
+              <i data-lucide="map-pin"></i>
+              <span>EXPORT GEOJSON</span>
+            </button>
+            <button class="btn btn-danger" id="btn-clear-inventory">
+              <i data-lucide="trash-2"></i>
+              <span>PURGE REGISTRY</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Inventory List Table -->
+        <div class="card inventory-card">
+          <div class="table-responsive">
+            <table class="data-table" id="inventory-table">
+              <thead>
+                <tr>
+                  <th>THUMB</th>
+                  <th>TREE ID</th>
+                  <th>SPECIES</th>
+                  <th>HEIGHT (m)</th>
+                  <th>DBH (cm)</th>
+                  <th>AGB BIOMASS (kg)</th>
+                  <th>CO₂ OFFSET (kg)</th>
+                  <th>COORDINATES (GPS)</th>
+                  <th>TIMESTAMP</th>
+                  <th class="actions-col">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body">
+                <tr class="empty-row">
+                  <td colspan="10">No records found. Run a Laser Scan.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: CALIBRATION -->
+      <section id="calibration-view" class="view-section">
+        <div class="card" style="max-width: 600px; margin: 20px auto; padding: 24px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.01);">
+          <div class="panel-header" style="border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
+            <h3 style="font-family: 'Rajdhani'; font-size: 20px; font-weight: 600; color: #ffffff;">CAMERA OPTICS CALIBRATION</h3>
+            <p style="font-size: 13px; color: var(--text-dimmed); margin-top: 4px;">Configure device-specific camera parameters to eliminate distance and diameter calculation errors.</p>
+          </div>
+          
+          <form id="calibration-form" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="input-grid-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label for="cal-hfov" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Horizontal Field of View (HFOV°)</label>
+                <input type="number" id="cal-hfov" value="60.0" step="0.1" min="10.0" max="150.0" style="width: 100%;" required>
+              </div>
+              <div class="form-group">
+                <label for="cal-vfov" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Vertical Field of View (VFOV°)</label>
+                <input type="number" id="cal-vfov" value="45.0" step="0.1" min="10.0" max="150.0" style="width: 100%;" required>
+              </div>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-color); margin: 8px 0;"></div>
+
+            <div class="input-grid-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label for="cal-sensor-w" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Sensor Width (S_w mm)</label>
+                <input type="number" id="cal-sensor-w" value="6.00" step="0.01" min="1.0" max="50.0" style="width: 100%;" required>
+              </div>
+              <div class="form-group">
+                <label for="cal-sensor-h" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Sensor Height (S_h mm)</label>
+                <input type="number" id="cal-sensor-h" value="4.50" step="0.01" min="1.0" max="50.0" style="width: 100%;" required>
+              </div>
+            </div>
+
+            <div class="input-grid-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label for="cal-focal-len" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Lens Focal Length (f mm)</label>
+                <input type="number" id="cal-focal-len" value="4.00" step="0.01" min="0.5" max="100.0" style="width: 100%;" required>
+              </div>
+              <div class="form-group">
+                <label for="cal-camera-h" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Default Camera Height (m)</label>
+                <input type="number" id="cal-camera-h" value="1.5" step="0.05" min="0.5" max="3.0" style="width: 100%;" required>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+              <button type="submit" class="btn btn-primary" id="btn-save-calibration" style="flex: 1; text-align: center; justify-content: center; height: 38px; font-weight: bold;">SAVE PROFILE</button>
+              <button type="button" class="btn btn-secondary" id="btn-reset-calibration" style="flex: 1; text-align: center; justify-content: center; height: 38px; font-weight: bold;">RESET TO DEFAULTS</button>
+            </div>
+          </form>
+
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border-color); font-family: 'Share Tech Mono'; font-size: 11px; line-height: 1.6; color: var(--text-dimmed);">
+            <div style="color: #ffffff; font-weight: bold; margin-bottom: 4px;">* SCIENTIFIC OPTICAL PRINCIPLES</div>
+            <div>• HFOV = 2 * arctan(S_w / 2f) * (180 / PI)</div>
+            <div>• VFOV = 2 * arctan(S_h / 2f) * (180 / PI)</div>
+            <div>• Image focal width px = Width_px / (2 * tan(HFOV / 2))</div>
+            <div>• Saving values will automatically calculate HFOV/VFOV fields based on focal length and sensor width/height.</div>
+          </div>
+
+          <!-- Task 7 Extension: 2-Meter Interactive FOV Projection Geometry Calibration Wizard Card -->
+          <div class="card" style="padding: 16px; margin-top: 20px;">
+            <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">INTERACTIVE FOV CALIBRATION WIZARD</h3>
+            <div style="font-family: monospace; font-size: 11px; color: var(--text-dimmed); margin-bottom: 12px;">
+              Follow the 4-step wizard to calibrate camera HFOV/VFOV optics at 2.0m distance.
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; font-family: monospace; font-size: 11px;">
+              <div>
+                <label style="color:#ffffff;">STEP 1: DISTANCE</label>
+                <input type="number" id="wiz-dist" value="2.0" step="0.1" readonly style="width:100%; background:#000; color:#fff; border:1px solid var(--border-color); padding:4px;">
+              </div>
+              <div>
+                <label style="color:#ffffff;">STEP 2: TARGET W (m)</label>
+                <input type="number" id="wiz-width" value="1.15" step="0.01" style="width:100%; background:#000; color:#fff; border:1px solid var(--border-color); padding:4px;">
+              </div>
+              <div>
+                <label style="color:#ffffff;">STEP 2: TARGET H (m)</label>
+                <input type="number" id="wiz-height" value="0.83" step="0.01" style="width:100%; background:#000; color:#fff; border:1px solid var(--border-color); padding:4px;">
+              </div>
+              <div style="display:flex; align-items:flex-end;">
+                <button type="button" class="btn btn-primary" id="btn-run-fov-wizard" style="width:100%; font-size:10px; font-family:monospace; height:28px;">CALCULATE FOV</button>
+              </div>
+            </div>
+
+            <div id="wiz-result-readout" style="margin-top: 10px; font-family: monospace; font-size: 11px; color: var(--accent-color); display: none;">
+              CALCULATED FOV: HFOV = <span id="wiz-res-hfov">60.0°</span> | VFOV = <span id="wiz-res-vfov">45.0°</span> (SAVED TO PROFILE)
+            </div>
+          </div>
+
+          <!-- Task 7 Extension: IMU Sensor Flat Surface Zeroing & Noise Card -->
+          <div class="card" style="padding: 16px; margin-top: 20px;">
+            <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">IMU SENSOR BIAS ZEROING & NOISE PROFILING</h3>
+            <div style="font-family: monospace; font-size: 11px; color: var(--text-dimmed); margin-bottom: 12px;">
+              Place phone on a flat level surface and acquire 200 orientation samples to zero gyro/accel drift offsets.
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+              <button type="button" class="btn btn-secondary" id="btn-zero-imu" style="font-family: monospace; font-size: 11px;">
+                <i data-lucide="crosshair"></i> ZERO IMU SENSORS (200 SAMPLES)
+              </button>
+              <button type="button" class="btn btn-secondary" id="btn-profile-noise" style="font-family: monospace; font-size: 11px;">
+                <i data-lucide="activity"></i> PROFILE NOISE (5 SECS)
+              </button>
+            </div>
+
+            <div id="imu-bias-readout" style="font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.02); padding: 10px; border: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+              <div>PITCH BIAS: <span id="bias-pitch-val" style="color:var(--accent-color);">0.000°</span></div>
+              <div>ROLL BIAS: <span id="bias-roll-val" style="color:var(--accent-color);">0.000°</span></div>
+              <div>COMPASS BIAS: <span id="bias-compass-val" style="color:var(--accent-color);">0.000°</span></div>
+              <div>σ PITCH NOISE: <span id="noise-pitch-val" style="color:#ffffff;">0.050°</span></div>
+              <div>σ ROLL NOISE: <span id="noise-roll-val" style="color:#ffffff;">0.050°</span></div>
+              <div>σ YAW NOISE: <span id="noise-yaw-val" style="color:#ffffff;">0.080°</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: VALIDATION -->
+      <section id="validation-view" class="view-section">
+        <div class="validation-layout" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; padding: 16px;">
+          
+          <!-- Column 1: Control Panel & Expedition Setup -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">EXPEDITION CONFIGURATION</h3>
+              <form id="expedition-form" style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="form-group">
+                  <label for="exp-project">Project Name</label>
+                  <input type="text" id="exp-project" value="PORTA-TLS FIELD VALIDATION" required>
+                </div>
+                <div class="form-group">
+                  <label for="exp-site">Site / Location Name</label>
+                  <input type="text" id="exp-site" value="Siberian Forest Plot B" required>
+                </div>
+                <div class="form-group">
+                  <label for="exp-operator">Lead Operator</label>
+                  <input type="text" id="exp-operator" value="Dr. J. Smith" required>
+                </div>
+                <div class="form-group">
+                  <label for="exp-weather">Weather Conditions</label>
+                  <input type="text" id="exp-weather" value="Sunny / Calm" required>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 6px;">
+                  <button type="button" class="btn btn-primary" id="btn-start-exp" style="flex: 1; text-align: center; justify-content: center;">START RUN</button>
+                  <button type="button" class="btn btn-secondary" id="btn-end-exp" style="flex: 1; text-align: center; justify-content: center;" disabled>END RUN</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Ablation Studies Selection Card -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">CV ABLATION STUDY CONTROLS</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-family: 'Share Tech Mono'; font-size: 11px; color:#ffffff;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="chk-abl-filter"> <span>DISABLE SENSOR FILTERS</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="chk-abl-seg"> <span>DISABLE TRUNK SEGMENTATION</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="chk-abl-cal"> <span>DISABLE OPTICS CALIBRATIONS</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="chk-abl-fusion"> <span>DISABLE MULTI-FRAME FUSION</span>
+                </label>
+              </div>
+              <div style="margin-top: 12px; font-size: 10px; color: var(--text-dimmed); line-height: 1.4;">
+                * Toggling checkboxes will dynamically simulate accuracy degradation (RMSE variances) inside the ablation report.
+              </div>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+              <button class="btn btn-primary" id="btn-print-val-report" style="width: 100%; text-align: center; justify-content: center; height: 36px;">PRINT VALIDATION REPORT</button>
+              <button class="btn btn-secondary" id="btn-export-val-data" style="width: 100%; text-align: center; justify-content: center; height: 36px;">EXPORT VALIDATION DATA JSON</button>
+              <button class="btn btn-secondary" id="btn-clear-val-db" style="width: 100%; text-align: center; justify-content: center; color: #ff3366; height: 36px;">PURGE VALIDATION DATABASE</button>
+            </div>
+          </div>
+
+          <!-- Column 2: Dashboard stats and canvas plots -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">VALIDATION ACCURACY TELEMETRY</h3>
+              
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
+                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                  <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">Height RMSE</div>
+                  <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 4px;" id="val-stat-rmse-height">0.00m</div>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                  <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">DBH RMSE</div>
+                  <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 4px;" id="val-stat-rmse-dbh">0.0cm</div>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                  <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">Height Bias</div>
+                  <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: #ffffff; margin-top: 4px;" id="val-stat-bias-height">0.00m</div>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                  <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">Scan Repeatability</div>
+                  <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: #ffffff; margin-top: 4px;" id="val-stat-repeatability">0.0%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Publication quality charts canvases -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">SCIENTIFIC AGREEMENT PLOTS</h3>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 10px; color: var(--text-dimmed); margin-bottom: 4px; font-family: monospace;">REGRESSION ANALYSIS</div>
+                  <canvas id="canvas-regression" width="400" height="300" style="width: 100%; height: 260px; max-width: 400px; display: block; border: 1px solid var(--border-color); margin: 0 auto;"></canvas>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 10px; color: var(--text-dimmed); margin-bottom: 4px; font-family: monospace;">BLAND-ALTMAN ANALYSIS</div>
+                  <canvas id="canvas-bland-altman" width="400" height="300" style="width: 100%; height: 260px; max-width: 400px; display: block; border: 1px solid var(--border-color); margin: 0 auto;"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- VIEW 7: PATENT INVENTIONS -->
+      <section id="inventions-view" class="view-section">
+        <div class="inventions-layout" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; padding: 16px;">
+          
+          <!-- Column 1: Config, Self-Calibration & Diagnostics -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- Patent Mode Activation Card -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">PATENT RUN RECORDER</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-family: 'Share Tech Mono'; font-size: 12px; color: #ffffff;">ENABLE PATENT MODE STEP LOGGING</span>
+                <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px;">
+                  <input type="checkbox" id="chk-patent-mode" style="opacity: 0; width: 0; height: 0;">
+                  <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border: 1px solid var(--border-color); border-radius: 20px;"></span>
+                </label>
+              </div>
+              <button class="btn btn-primary" id="btn-export-patent-logs" style="width: 100%; text-align: center; justify-content: center; height: 36px;">DOWNLOAD PATENT LOGS (JSON)</button>
+            </div>
+
+            <!-- Self-Calibration Learning Dashboard -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">SELF-LEARNING CAMERA STATS</h3>
+              <div id="learning-stats-readout" style="font-family: 'Share Tech Mono'; font-size: 12px; color: #ffffff; line-height: 1.6;">
+                • Learning Samples Capped: 0 scans<br>
+                • Height Bias Correction: 0.00%<br>
+                • DBH Bias Correction: 0.00%<br>
+                • Calibration Status: PENDING RUNS
+              </div>
+            </div>
+
+            <!-- Self-Diagnostics Readout -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">INSTRUMENT SELF-DIAGNOSTICS</h3>
+              <div id="diagnostics-status-list" style="display: flex; flex-direction: column; gap: 8px; font-family: monospace; font-size: 11px;">
+                <div style="border: 1px solid var(--border-color); padding: 8px;">
+                  <div style="font-weight: bold; color: var(--accent-color);">IMU Sensor Stabilizer: STABLE</div>
+                  <div style="color: var(--text-dimmed); margin-top: 4px;">Minimal sensor jitter detected.</div>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 8px;">
+                  <div style="font-weight: bold; color: var(--accent-color);">Camera Optics: OPTIMAL</div>
+                  <div style="color: var(--text-dimmed); margin-top: 4px;">Luminance variance within tolerances.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Scorecard, Explainability & Tech Docs Drawer -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- Inventions Scorecard & Explainability Trace -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ADAPTIVE FUSION EXPLAINER</h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center; background: rgba(255,255,255,0.01);">
+                  <div style="font-size: 10px; color: var(--text-dimmed); font-family: monospace;">RELIABILITY INDEX (MRI)</div>
+                  <div style="font-size: 28px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 6px;" id="mri-gauge">--</div>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center; background: rgba(255,255,255,0.01);">
+                  <div style="font-size: 10px; color: var(--text-dimmed); font-family: monospace;">TREE COMPLETENESS (TCS)</div>
+                  <div style="font-size: 28px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 6px;" id="tcs-gauge">--%</div>
+                </div>
+              </div>
+
+              <!-- Structural Classifier Row -->
+              <div style="border: 1px solid var(--border-color); padding: 10px; margin-bottom: 16px; font-family: monospace; font-size: 11px;">
+                <strong>STRUCTURAL TREE QUALITY CLASSIFICATION:</strong><br>
+                • Trunk: <span id="trunk-classifier-type" style="color: var(--accent-color); font-weight: bold;">UNKNOWN</span><br>
+                • Canopy: <span id="canopy-classifier-type" style="color: var(--accent-color); font-weight: bold;">UNKNOWN</span>
+              </div>
+
+              <div id="explainability-list" style="font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 6px; color:#ffffff;">
+                Run a laser scan to calculate fusion weights traces.
+              </div>
+            </div>
+
+            <!-- Inventions Tech Docs Drawer -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ALGORITHM DISCLOSURES (PATENT DRAFTING)</h3>
+              
+              <div id="tech-docs-drawer" style="max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; color:#ffffff;">
+                <!-- Dynamically loaded documentation lists -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- View 7: Enterprise SaaS Workspace Section -->
+      <section id="enterprise-view" class="view-section">
+        <div class="section-header">
+          <div>
+            <h2>ENTERPRISE SAAS WORKSPACE</h2>
+            <p>Multi-tenant architecture, offline-first sync engine, GIS satellite radar, and audit controls</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px;">
+          <!-- Left Column: User Auth Role Card & GIS Map Canvas -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- User Role & Authentication Card -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ROLE-BASED AUTHENTICATION & SESSIONS</h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-family: monospace; font-size: 11px;">
+                <div>
+                  <label style="color: var(--text-dimmed); display: block; margin-bottom: 4px;">USER ROLE:</label>
+                  <select id="sel-user-role" class="form-control" style="font-family: monospace; font-size: 11px; background: #000000; color: #ffffff; border: 1px solid var(--border-color); padding: 4px;">
+                    <option value="RESEARCHER" selected>RESEARCHER (Full Write)</option>
+                    <option value="ADMIN">ADMINISTRATOR (Full Access)</option>
+                    <option value="FOREST_OFFICER">FOREST OFFICER (Field Scans)</option>
+                    <option value="GUEST">GUEST (Read-Only)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="color: var(--text-dimmed); display: block; margin-bottom: 4px;">BIOMASS PLUGIN ENGINE:</label>
+                  <select id="sel-biomass-plugin" class="form-control" style="font-family: monospace; font-size: 11px; background: #000000; color: #ffffff; border: 1px solid var(--border-color); padding: 4px;">
+                    <option value="FAO_GENERIC" selected>FAO Generic Model</option>
+                    <option value="CONIFER">Conifer Taper Model</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- GIS Map Radar Card -->
+            <div class="card" style="padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin-bottom: 12px;">
+                <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; margin: 0;">GIS SATELLITE MAP ENGINE</h3>
+                <div style="display: flex; gap: 10px; align-items: center; font-family: monospace; font-size: 10px;">
+                  <select id="sel-gis-mode" style="background: #000000; color: #ffffff; border: 1px solid var(--border-color); font-size: 10px;">
+                    <option value="satellite" selected>Satellite View</option>
+                    <option value="terrain">Terrain View</option>
+                    <option value="street">Street Grid</option>
+                  </select>
+                  <label style="display: flex; gap: 4px; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="chk-gis-heatmap" checked> Heatmap
+                  </label>
+                </div>
+              </div>
+
+              <div style="width: 100%; height: 260px; background: #000000; border: 1px solid var(--border-color); position: relative;">
+                <canvas id="gis-map-canvas" width="600" height="260" style="width: 100%; height: 100%; display: block;"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Sync Telemetry & Audit Logs -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- Sync Status Card -->
+            <div class="card" style="padding: 16px;">
+              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">OFFLINE SYNC TELEMETRY</h3>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-family: monospace; font-size: 11px;">
+                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center;">
+                  <div style="font-size: 10px; color: var(--text-dimmed);">SYNC STATUS</div>
+                  <div style="font-size: 14px; font-weight: bold; color: var(--accent-color); margin-top: 4px;" id="sync-status-badge">ONLINE / SYNCED</div>
+                </div>
+                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center;">
+                  <div style="font-size: 10px; color: var(--text-dimmed);">PENDING QUEUE</div>
+                  <div style="font-size: 14px; font-weight: bold; color: var(--accent-color); margin-top: 4px;" id="sync-pending-count">0 Records</div>
+                </div>
+              </div>
+
+              <button class="btn btn-secondary" id="btn-force-sync" style="width: 100%; font-family: monospace; font-size: 11px;">
+                <i data-lucide="refresh-cw"></i> FORCE CLOUD SYNCHRONIZATION
+              </button>
+            </div>
+
+            <!-- Audit Log Terminal Card -->
+            <div class="card" style="padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin-bottom: 12px;">
+                <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; margin: 0;">SECURITY AUDIT LOG CONSOLE</h3>
+                <button class="btn btn-secondary" id="btn-export-audit-logs" style="font-size: 9px; padding: 2px 8px; font-family: monospace;">EXPORT CSV</button>
+              </div>
+
+              <div id="audit-console-output" style="background: #000000; border: 1px solid var(--border-color); padding: 10px; font-family: monospace; font-size: 10px; color: var(--accent-color); height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+                <div>[SYSTEM] Audit Logger initialized. IndexedDB active.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- View 8: Patent & Innovation Workspace Section -->
+      <section id="patent-view" class="view-section">
+      </section>
+
+      <!-- View 9: Adaptive Forestry Intelligence Workspace Section -->
+      <section id="intelligence-view" class="view-section">
+        <div id="afie-standalone-container"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-nav">
+    <a href="#dashboard" class="mobile-nav-item active" data-tab="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>DASHBOARD</span>
+    </a>
+    <a href="#scanner" class="mobile-nav-item" data-tab="scanner">
+      <i data-lucide="crosshair"></i>
+      <span>SCANNER</span>
+    </a>
+    <a href="#inventory" class="mobile-nav-item" data-tab="inventory">
+      <i data-lucide="clipboard-list"></i>
+      <span>REGISTRY</span>
+    </a>
+    <a href="#calibration" class="mobile-nav-item" data-tab="calibration">
+      <i data-lucide="sliders"></i>
+      <span>CALIBRATE</span>
+    </a>
+    <a href="#validation" class="mobile-nav-item" data-tab="validation">
+      <i data-lucide="shield-alert"></i>
+      <span>VALIDATE</span>
+    </a>
+    <a href="#inventions" class="mobile-nav-item" data-tab="inventions">
+      <i data-lucide="award"></i>
+      <span>INVENT</span>
+    </a>
+  </nav>
+
+  <!-- Grayscale Detailed Modal Report -->
+  <div class="modal" id="tree-detail-modal">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2>SPATIAL SCAN DATA REPORT: <span id="modal-tree-id">TR-000</span></h2>
+        <button class="btn-close" id="btn-close-modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="modal-col">
+            <div class="modal-image-wrapper">
+              <img id="modal-tree-image" src="" alt="Tree Scan Frame">
+            </div>
+            <div class="gps-badge">
+              <i data-lucide="map-pin"></i>
+              <span id="modal-tree-gps">--</span>
+            </div>
+          </div>
+          
+          <div class="modal-col modal-details-column">
+            <div class="info-group-box">
+              <h3>CLASSIFICATION</h3>
+              <div class="details-spec-grid">
+                <div class="detail-row">
+                  <span class="detail-lbl">TAXONOMIC FAMILY:</span>
+                  <span class="detail-val" id="modal-tree-species">--</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-lbl">WOOD DRY DENSITY (ρ):</span>
+                  <span class="detail-val"><span id="modal-tree-density">--</span> g/cm³</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-group-box">
+              <h3>DIMENSIONS (CAD METRICS)</h3>
+              <div class="details-spec-grid">
+                <div class="detail-row">
+                  <span class="detail-lbl">CALCULATED HEIGHT:</span>
+                  <span class="detail-val" id="modal-tree-height">--</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-lbl">TRUNK DBH:</span>
+                  <span class="detail-val" id="modal-tree-dbh">--</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-group-box highlight-box">
+              <h3>ECOLOGICAL ANALYSIS</h3>
+              <div class="details-spec-grid">
+                <div class="detail-row">
+                  <span class="detail-lbl">DRY BIOMASS (AGB):</span>
+                  <span class="detail-val" id="modal-tree-agb">--</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-lbl">CARBON EQUIVALENT:</span>
+                  <span class="detail-val" id="modal-tree-co2">--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript entry point -->
+</body>
+</html>

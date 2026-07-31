@@ -3,12 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "host": "vite --host",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^1.2.0",
     "vite": "^5.3.1"
   }
 }
