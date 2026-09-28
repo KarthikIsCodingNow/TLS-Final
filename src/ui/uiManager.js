@@ -1173,12 +1173,11 @@ function calculateAutoTreeDimensions() {
 
   // Biomass and Density
   const species = DOM.autoTreeSpecies.value;
-  let density = 0.50;
+  let density = 0.65;
   if (species === 'Custom') {
-    density = parseFloat(DOM.autoCustomDensityRange.value) || 0.50;
+    density = parseFloat(DOM.autoCustomDensityRange.value) || 0.65;
   } else {
-    const lookup = { Oak: 0.75, Pine: 0.45, Maple: 0.65, Birch: 0.60, Eucalyptus: 0.80, Teak: 0.66 };
-    density = lookup[species] || 0.50;
+    density = getSpeciesData(species)?.densityGcm3 || 0.65;
   }
 
   const rawAgb = 0.0673 * Math.pow((density * Math.pow(dbh, 2) * height), 0.976);
@@ -2585,9 +2584,7 @@ function showTreeDetails(treeId) {
 
   DOM.modalTreeId.innerText = tree.id;
   DOM.modalTreeSpecies.innerText = tree.species;
-  
-  const lookup = { Oak: 0.75, Pine: 0.45, Maple: 0.65, Birch: 0.60, Eucalyptus: 0.80, Teak: 0.66 };
-  const density = lookup[tree.species] || 0.50;
+  const density = tree.woodDensity || getSpeciesData(tree.species)?.densityGcm3 || 0.65;
   DOM.modalTreeDensity.innerText = density.toFixed(2);
   
   DOM.modalTreeHeight.innerText = `${tree.height.toFixed(2)} m`;

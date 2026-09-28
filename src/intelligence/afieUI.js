@@ -49,14 +49,24 @@ export class AfieUI {
           <div class="d-flex align-items-center gap-3">
             <div class="d-flex align-items-center gap-2">
               <span class="small font-mono text-muted">SPECIES:</span>
-              <select id="afie-species-select" class="form-select form-select-sm bg-dark text-cyan border-teal font-mono" style="width: 140px;">
-                <option value="oak">Oak (Quercus)</option>
-                <option value="pine">Pine (Pinus)</option>
-                <option value="teak" selected>Teak (Tectona)</option>
-                <option value="eucalyptus">Eucalyptus</option>
-                <option value="neem">Neem Tree</option>
-                <option value="douglas_fir">Douglas Fir</option>
-                <option value="generic_hardwood">Generic Hardwood</option>
+              <select id="afie-species-select" class="form-select form-select-sm bg-dark text-cyan border-teal font-mono" style="width: 220px;">
+                <option value="neem" selected>Neem (Vepa) - A. indica</option>
+                <option value="red_sanders">Red Sanders (Rakta Chandanam)</option>
+                <option value="banyan">Banyan (Marri) - F. benghalensis</option>
+                <option value="peepal">Peepal (Raavi) - F. religiosa</option>
+                <option value="mango">Mango (Mamidi) - M. indica</option>
+                <option value="tamarind">Tamarind (Chinta) - T. indica</option>
+                <option value="amla">Amla (Usiri) - P. emblica</option>
+                <option value="pongamia">Pongamia (Kanuga) - P. pinnata</option>
+                <option value="jamun">Jamun (Neredu) - S. cumini</option>
+                <option value="arjun">Arjun (Tella Maddhi) - T. arjuna</option>
+                <option value="jackfruit">Jackfruit (Panasa) - A. heterophyllus</option>
+                <option value="custard_apple">Custard Apple (Sitaphal)</option>
+                <option value="teak">Teak (Teku) - T. grandis</option>
+                <option value="casuarina">Casuarina (Sarugudu)</option>
+                <option value="sandalwood">Sandalwood (Chandanam)</option>
+                <option value="mahua">Mahua (Ippa) - M. longifolia</option>
+                <option value="generic_hardwood">Generic AP Hardwood</option>
               </select>
             </div>
             <button id="btn-afie-recompute" class="btn btn-sm btn-cyan font-mono px-3 font-bold" style="background: #00f2fe; color: #000; border: none;">

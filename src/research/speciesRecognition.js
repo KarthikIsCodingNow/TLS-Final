@@ -21,9 +21,11 @@ export function predictSpeciesCandidates(heightM = 20, dbhCm = 40, barkTexture =
     score -= Math.min(30, (hDiff + dbhDiff) * 15);
 
     // Bark texture heuristic match
-    if (barkTexture === 'Fissured' && (sp.commonName === 'Oak' || sp.commonName === 'Pine' || sp.commonName === 'Douglas Fir')) {
+    if (barkTexture === 'Fissured' && (sp.commonName.includes('Neem') || sp.commonName.includes('Red Sanders') || sp.commonName.includes('Tamarind') || sp.commonName.includes('Teak'))) {
       score += 15;
-    } else if (barkTexture === 'Smooth' && (sp.commonName === 'Birch' || sp.commonName === 'Eucalyptus' || sp.commonName === 'Balsa')) {
+    } else if (barkTexture === 'Smooth' && (sp.commonName.includes('Arjun') || sp.commonName.includes('Peepal') || sp.commonName.includes('Pongamia'))) {
+      score += 15;
+    } else if (barkTexture === 'Rough' && (sp.commonName.includes('Jamun') || sp.commonName.includes('Casuarina') || sp.commonName.includes('Mango') || sp.commonName.includes('Banyan'))) {
       score += 15;
     }
 

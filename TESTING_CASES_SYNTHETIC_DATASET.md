@@ -1,219 +1,237 @@
-# PORTA-TLS Terrestrial Laser Scanner Simulator: Scientific Validation Benchmark Dataset
+# PORTA-TLS / TLSCAD: Scientific Synthetic Benchmark Dataset (Andhra Pradesh, India)
+## 135-Case High-Fidelity Forest Testing Dataset for Mobile LiDAR / Inclinometer Biomass Allometry
 
-**Dataset Version**: 2.4.0-SYNTHETIC-BENCHMARK  
-**Total Sample Size**: $N = 135$ Field Scenarios  
-**Evaluation Standard**: Ground-Truth Forestry Hypsometer (Haglöf Vertex 5) & Precision Caliper Audited  
-**Allometric Model**: Chave et al. (2014) Pan-Tropical Model with Global Wood Density Database (Zanne et al., 2009)  
-
----
-
-## 1. Executive Summary & Verification Metrics
-
-This dataset contains **135 simulated field testing cases** modeling the operational deployment of the **Porta-TLS / TLSCAD** mobile terrestrial laser scanner simulator across diverse global forest biomes. Each test scenario incorporates real physical instrumentation parameters: device camera height ($h_c = 1.60\text{ m}$), ground distance ($D$), base angle ($\theta_{\text{base}}$), top canopy angle ($\theta_{\text{top}}$), optical caliper angular pixel extent, wood specific gravity ($\rho$), and environmental covariates (lighting, sensor stability, biome).
-
-### Aggregate Performance Statistics ($N = 135$)
-
-| Metric Category | Target Indicator | Value | Unit | Scientific Benchmark / Standard |
-| :--- | :--- | :---: | :---: | :--- |
-| **Height Accuracy** | Mean Absolute Error (MAE) | **0.15** | $\text{m}$ | Forestry Hypsometer Tolerance $\le 0.50\text{ m}$ |
-| | Root Mean Squared Error (RMSE) | **0.199** | $\text{m}$ | LiDAR Standard Error $\le 0.40\text{ m}$ |
-| | Mean Percentage Error (MAPE) | **0.64%** | $%$ | High Fidelity Baseline $< 3.0\%$ |
-| | Mean Systematic Bias | **-0.001** | $\text{m}$ | Clinometer Neutral Baseline $\approx 0.00\text{ m}$ |
-| **DBH Trunk Thickness** | Mean Absolute Error (MAE) | **1.059** | $\text{cm}$ | Caliper Tolerance $\le 2.0\text{ cm}$ |
-| | Root Mean Squared Error (RMSE) | **1.314** | $\text{cm}$ | Optical Caliper Baseline $\le 1.80\text{ cm}$ |
-| | Mean Percentage Error (MAPE) | **2.27%** | $%$ | Forestry Precision $< 4.0\%$ |
-| | Mean Systematic Bias | **0.064** | $\text{cm}$ | Caliper Neutral Baseline $\approx 0.00\text{ cm}$ |
-| **Ecological Telemetry** | Total Dry Biomass (AGB) | **416,990.8** | $\text{kg}$ | Chave et al. (2014) Allometric Sum |
-| | Total Carbon Equivalent ($CO_2$) | **765,178.1** | $\text{kg}$ | Molecular Ratio ($CO_2 = AGB \times 1.835$) |
-| **Quality Distribution** | Grade A (Confidence $\ge 90\%$) | **121** | trees | Research Grade Certification |
-| | Grade B (Confidence $75-89\%$) | **14** | trees | Field Survey Grade Certification |
+> **Publication-Grade Ground Truth vs. Estimated Validation Protocol**  
+> **Region**: Andhra Pradesh, India (Eastern Ghats, Rayalaseema, Godavari Basin & Coastal Coringa)  
+> **Primary Allometric Standard**: Chave et al. (2014) Global Pan-Tropical Equation  
+> **Carbon Factor Standard**: IPCC Good Practice Guidance ($C = AGB \times 0.50$, $CO_2 = C \times 3.667$)  
+> **Wood Specific Gravity Standard**: Global Wood Density Database (Zanne et al., 2009; Chave et al., 2009; FSI Dehradun)
 
 ---
 
-## 2. Mathematical Models & Formulation
+## 1. Executive Summary & Validation Benchmark Statistics
 
-### 2.1 Clinometer Height ($H$) Formulation
-$$\theta_{\text{base}} = -\arctan\left(\frac{h_c}{D}\right), \quad \theta_{\text{top}} = \arctan\left(\frac{H_{\text{GT}} - h_c}{D}\right)$$
-$$H_{\text{EST}} = D \times (\tan(\theta_{\text{top}}) - \tan(\theta_{\text{base}}))$$
+This synthetic benchmark replicates real-world ground conditions across 6 prominent forest zones of **Andhra Pradesh, India**, encompassing 17 native and endemic tree species (notably **Red Sanders / Rakta Chandanam**, which is strictly endemic to the Seshachalam Hills).
 
-### 2.2 Trunk Diameter at Breast Height (DBH) Optical Caliper
-$$\text{DBH} = 2 \times D \times \tan\left(\frac{w_{\text{trunk\_px}}}{W_{\text{frame\_px}}} \times \frac{\text{HFOV}}{2}\right)$$
+### Statistical Performance Across 135 Field Verification Cases
 
-### 2.3 Above-Ground Biomass (AGB) & $CO_2$ Absorption
-Implemented pan-tropical allometric equation derived by **Chave et al. (2014)**:
-$$AGB = 0.0673 \times (\rho \times \text{DBH}^2 \times H)^{0.976}$$
-$$\text{CO}_2 \text{ offset (kg)} = AGB \times 0.50 \times \frac{44}{12} = AGB \times 1.835$$
+| Metric Dimension | Ground Truth Mean | Estimated Mean | Mean Bias (Error) | MAE | RMSE | Relative Error | Pearson $R^2$ |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Total Height ($H$)** | `16.82 m` | `16.86 m` | `+0.041 m` | **`0.24 m`** | **`0.29 m`** | **`1.49%`** | **`0.9979`** |
+| **Trunk DBH ($D$)** | `53.7 cm` | `53.6 cm` | `-0.119 cm` | **`0.87 cm`** | **`1.11 cm`** | **`2.00%`** | **`0.9988`** |
+| **Biomass ($AGB$)** | `2194.2 kg` | `2188.4 kg` | `-5.80 kg` | **`79.0 kg`** | **`133.0 kg`** | **`4.21%`** | **`0.9988`** |
 
----
+### Quality Grade Classification
 
-## 3. Comprehensive 135-Tree Benchmark Test Cases
-
-The table below catalogs all 135 synthetic field validation cases, stripped of extraneous noise and focusing strictly on the operational telemetry metrics utilized by the Porta-TLS engine.
-
-| Case ID | Taxonomic Species | Biome / Study Site | Wood $\rho$ | Dist $D$ | $\theta_{\text{base}}$ | $\theta_{\text{top}}$ | GT $H$ (m) | Est $H$ (m) | $\Delta H$ | GT DBH (cm) | Est DBH (cm) | $\Delta$ DBH | Est AGB (kg) | Est $CO_2$ (kg) | Conf | Grade |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `TLS-EXP-001` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 13.4m | -6.8° | 45.9° | 15.44 | 15.52 | +0.08m | 29.4 | 27.6 | -1.8cm | 291.4 | 534.7 | 91% | Grade A |
-| `TLS-EXP-002` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 13.2m | -6.9° | 55.8° | 21 | 20.41 | -0.59m | 44 | 43.6 | -0.4cm | 1,470.5 | 2,698.4 | 86% | Grade B |
-| `TLS-EXP-003` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 24m | -3.8° | 49.9° | 30.15 | 30.09 | -0.06m | 80.5 | 82.8 | +2.3cm | 7,103.6 | 13,035.1 | 89% | Grade B |
-| `TLS-EXP-004` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 24m | -3.8° | 55.3° | 36.2 | 35.72 | -0.48m | 97.6 | 96.8 | -0.8cm | 10,901.6 | 20,004.4 | 91% | Grade A |
-| `TLS-EXP-005` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 10.3m | -8.8° | 50.8° | 14.22 | 14.49 | +0.27m | 21.8 | 23 | +1.2cm | 256.9 | 471.4 | 96% | Grade A |
-| `TLS-EXP-006` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 20.8m | -4.4° | 53.1° | 29.29 | 29.25 | -0.04m | 81.2 | 80.1 | -1.1cm | 4,610.4 | 8,460.1 | 92% | Grade A |
-| `TLS-EXP-007` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 24m | -3.8° | 51.1° | 31.37 | 32.02 | +0.65m | 88.5 | 89.3 | +0.8cm | 10,501.5 | 19,270.3 | 87% | Grade B |
-| `TLS-EXP-008` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 10.8m | -8.4° | 54.2° | 16.58 | 16.67 | +0.09m | 24.5 | 27.4 | +2.9cm | 447.7 | 821.5 | 90% | Grade A |
-| `TLS-EXP-009` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 24m | -3.8° | 49.6° | 29.81 | 29.18 | -0.63m | 83.8 | 84.3 | +0.5cm | 5,701.2 | 10,461.7 | 95% | Grade A |
-| `TLS-EXP-010` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 13.2m | -6.9° | 44.1° | 14.37 | 14.48 | +0.11m | 20.9 | 21.8 | +0.9cm | 156.9 | 287.9 | 97% | Grade A |
-| `TLS-EXP-011` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 13.9m | -6.6° | 47.1° | 16.58 | 16.78 | +0.2m | 33.3 | 34.1 | +0.8cm | 454.6 | 834.2 | 93% | Grade A |
-| `TLS-EXP-012` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 24m | -3.8° | 48.5° | 28.73 | 28.62 | -0.11m | 69.6 | 69.1 | -0.5cm | 2,693.1 | 4,941.8 | 94% | Grade A |
-| `TLS-EXP-013` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 20.9m | -4.4° | 49.4° | 25.98 | 25.86 | -0.12m | 63.6 | 63 | -0.6cm | 2,402.1 | 4,407.9 | 93% | Grade A |
-| `TLS-EXP-014` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 24m | -3.8° | 49.4° | 29.6 | 29.86 | +0.26m | 79.3 | 81.5 | +2.2cm | 7,228.3 | 13,263.9 | 90% | Grade A |
-| `TLS-EXP-015` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 18.7m | -4.9° | 52.7° | 26.13 | 26.29 | +0.16m | 57.3 | 58.2 | +0.9cm | 3,128.9 | 5,741.5 | 93% | Grade A |
-| `TLS-EXP-016` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 12m | -7.6° | 56.4° | 19.67 | 19.61 | -0.06m | 47.7 | 47.9 | +0.2cm | 1,537.8 | 2,821.9 | 93% | Grade A |
-| `TLS-EXP-017` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 24m | -3.8° | 46.5° | 26.87 | 26.66 | -0.21m | 69 | 68.9 | -0.1cm | 3,965.9 | 7,277.4 | 92% | Grade A |
-| `TLS-EXP-018` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 19m | -4.8° | 53.6° | 27.37 | 27.54 | +0.17m | 65.6 | 64.5 | -1.1cm | 2,848.2 | 5,226.4 | 93% | Grade A |
-| `TLS-EXP-019` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 20.2m | -4.5° | 50.8° | 26.35 | 26.53 | +0.18m | 79.6 | 80.3 | +0.7cm | 7,103.5 | 13,034.9 | 90% | Grade A |
-| `TLS-EXP-020` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 12m | -7.6° | 42.9° | 12.75 | 12.65 | -0.1m | 20.9 | 21.1 | +0.2cm | 205.4 | 376.9 | 92% | Grade A |
-| `TLS-EXP-021` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 24m | -3.8° | 49.8° | 29.98 | 29.9 | -0.08m | 75.9 | 74.9 | -1cm | 4,635.3 | 8,505.8 | 93% | Grade A |
-| `TLS-EXP-022` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 24m | -3.8° | 46.9° | 27.23 | 27.17 | -0.06m | 65.5 | 65.9 | +0.4cm | 2,513.2 | 4,611.7 | 96% | Grade A |
-| `TLS-EXP-023` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 14.7m | -6.2° | 44.1° | 15.84 | 15.85 | +0.01m | 29 | 27.9 | -1.1cm | 290.6 | 533.3 | 96% | Grade A |
-| `TLS-EXP-024` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 14.1m | -6.5° | 56.6° | 22.98 | 22.84 | -0.14m | 44.3 | 43.7 | -0.6cm | 883.5 | 1,621.2 | 94% | Grade A |
-| `TLS-EXP-025` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 10.3m | -8.8° | 52.6° | 15.09 | 15.12 | +0.03m | 24.2 | 23.1 | -1.1cm | 200.7 | 368.3 | 93% | Grade A |
-| `TLS-EXP-026` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 24m | -3.8° | 44.8° | 25.4 | 25.48 | +0.08m | 74.4 | 75 | +0.6cm | 5,264.3 | 9,660 | 93% | Grade A |
-| `TLS-EXP-027` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 10.9m | -8.4° | 55.6° | 17.49 | 17.64 | +0.15m | 27.1 | 26.1 | -1cm | 443 | 812.9 | 92% | Grade A |
-| `TLS-EXP-028` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 19.5m | -4.7° | 45.6° | 21.54 | 21.74 | +0.2m | 49.3 | 48.4 | -0.9cm | 1,735.4 | 3,184.5 | 87% | Grade B |
-| `TLS-EXP-029` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 12.9m | -7.1° | 55.5° | 20.35 | 20.59 | +0.24m | 38.3 | 35.7 | -2.6cm | 854 | 1,567.1 | 90% | Grade A |
-| `TLS-EXP-030` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 18.9m | -4.8° | 43.3° | 19.44 | 19.16 | -0.28m | 43.1 | 42.4 | -0.7cm | 881.3 | 1,617.2 | 92% | Grade A |
-| `TLS-EXP-031` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 18.3m | -5° | 48.8° | 22.48 | 22.5 | +0.02m | 47.1 | 45.3 | -1.8cm | 1,978.5 | 3,630.5 | 90% | Grade A |
-| `TLS-EXP-032` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 20.3m | -4.5° | 48.8° | 24.82 | 24.99 | +0.17m | 52.1 | 51.2 | -0.9cm | 2,252.2 | 4,132.8 | 91% | Grade A |
-| `TLS-EXP-033` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 17.8m | -5.1° | 45.6° | 19.78 | 19.59 | -0.19m | 36 | 36.8 | +0.8cm | 766.3 | 1,406.2 | 90% | Grade A |
-| `TLS-EXP-034` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 17.3m | -5.3° | 47.4° | 20.42 | 20.39 | -0.03m | 49 | 47.8 | -1.2cm | 1,014.7 | 1,862 | 94% | Grade A |
-| `TLS-EXP-035` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 16.7m | -5.5° | 51.8° | 22.81 | 22.26 | -0.55m | 59.4 | 60.4 | +1cm | 1,828.3 | 3,354.9 | 92% | Grade A |
-| `TLS-EXP-036` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 21.2m | -4.3° | 48.1° | 25.25 | 25.21 | -0.04m | 62 | 63 | +1cm | 1,986.7 | 3,645.6 | 93% | Grade A |
-| `TLS-EXP-037` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 11.2m | -8.1° | 55.1° | 17.67 | 17.59 | -0.08m | 36.1 | 37.3 | +1.2cm | 592.8 | 1,087.8 | 91% | Grade A |
-| `TLS-EXP-038` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 23.5m | -3.9° | 49.1° | 28.75 | 28.81 | +0.06m | 79.1 | 81 | +1.9cm | 6,896.8 | 12,655.6 | 93% | Grade A |
-| `TLS-EXP-039` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 22.1m | -4.1° | 48.9° | 26.95 | 27.24 | +0.29m | 77.5 | 76.9 | -0.6cm | 5,580 | 10,239.3 | 93% | Grade A |
-| `TLS-EXP-040` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 10.2m | -8.9° | 56.2° | 16.81 | 17.08 | +0.27m | 27.2 | 25.5 | -1.7cm | 392.5 | 720.2 | 93% | Grade A |
-| `TLS-EXP-041` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 20m | -4.6° | 53.6° | 28.74 | 28.69 | -0.05m | 92.4 | 91.9 | -0.5cm | 7,475.4 | 13,717.4 | 94% | Grade A |
-| `TLS-EXP-042` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 22.9m | -4° | 46.9° | 26.03 | 26.02 | -0.01m | 63.6 | 65.6 | +2cm | 2,785.1 | 5,110.7 | 91% | Grade A |
-| `TLS-EXP-043` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 16.4m | -5.6° | 48.9° | 20.38 | 20.17 | -0.21m | 41 | 39.9 | -1.1cm | 1,388 | 2,547 | 92% | Grade A |
-| `TLS-EXP-044` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 19.8m | -4.6° | 49.1° | 24.44 | 24.37 | -0.07m | 55.5 | 56.6 | +1.1cm | 2,672.8 | 4,904.6 | 92% | Grade A |
-| `TLS-EXP-045` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 12.5m | -7.3° | 54.7° | 19.23 | 19.26 | +0.03m | 39.1 | 39.8 | +0.7cm | 878.3 | 1,611.7 | 91% | Grade A |
-| `TLS-EXP-046` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 20.5m | -4.5° | 47.5° | 23.97 | 23.96 | -0.01m | 58.8 | 58.9 | +0.1cm | 1,785.4 | 3,276.2 | 93% | Grade A |
-| `TLS-EXP-047` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 10.2m | -8.9° | 47.9° | 12.9 | 12.86 | -0.04m | 24.6 | 25.4 | +0.8cm | 197.3 | 362 | 94% | Grade A |
-| `TLS-EXP-048` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 24m | -3.8° | 54.3° | 34.97 | 34.77 | -0.2m | 97.8 | 98 | +0.2cm | 6,441.3 | 11,819.8 | 93% | Grade A |
-| `TLS-EXP-049` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 15m | -6.1° | 49.2° | 18.95 | 18.99 | +0.04m | 36.9 | 34.6 | -2.3cm | 551.7 | 1,012.4 | 92% | Grade A |
-| `TLS-EXP-050` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 8.9m | -10.2° | 52.7° | 13.29 | 13.16 | -0.13m | 18.6 | 18.5 | -0.1cm | 179.8 | 329.9 | 92% | Grade A |
-| `TLS-EXP-051` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 18.3m | -5° | 55.4° | 28.09 | 28.22 | +0.13m | 70.9 | 72.3 | +1.4cm | 5,120.7 | 9,396.5 | 94% | Grade A |
-| `TLS-EXP-052` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 11.2m | -8.1° | 54.3° | 17.18 | 17.24 | +0.06m | 31.5 | 33.1 | +1.6cm | 659.1 | 1,209.4 | 90% | Grade A |
-| `TLS-EXP-053` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 21m | -4.4° | 46.7° | 23.87 | 24.03 | +0.16m | 56.2 | 56.3 | +0.1cm | 2,416 | 4,433.4 | 95% | Grade A |
-| `TLS-EXP-054` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 24m | -3.8° | 45.4° | 25.94 | 26.23 | +0.29m | 64.6 | 64.4 | -0.2cm | 2,707.7 | 4,968.6 | 93% | Grade A |
-| `TLS-EXP-055` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 20.7m | -4.4° | 47° | 23.82 | 23.73 | -0.09m | 61.3 | 62.4 | +1.1cm | 3,893.9 | 7,145.3 | 90% | Grade A |
-| `TLS-EXP-056` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 13.5m | -6.8° | 54.5° | 20.51 | 20.49 | -0.02m | 43.6 | 40.8 | -2.8cm | 1,191.1 | 2,185.7 | 94% | Grade A |
-| `TLS-EXP-057` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 18.1m | -5.1° | 53.5° | 26.08 | 26.23 | +0.15m | 60.3 | 61.8 | +1.5cm | 2,802.8 | 5,143.1 | 90% | Grade A |
-| `TLS-EXP-058` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 17.4m | -5.3° | 54.4° | 25.93 | 25.81 | -0.12m | 70.1 | 70.5 | +0.4cm | 2,726.9 | 5,003.9 | 94% | Grade A |
-| `TLS-EXP-059` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 23.5m | -3.9° | 48.5° | 28.19 | 27.77 | -0.42m | 87 | 85.5 | -1.5cm | 4,471 | 8,204.3 | 86% | Grade B |
-| `TLS-EXP-060` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 20.4m | -4.5° | 52.8° | 28.44 | 28.52 | +0.08m | 76.6 | 77.6 | +1cm | 3,366 | 6,176.6 | 95% | Grade A |
-| `TLS-EXP-061` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 18m | -5.1° | 45.9° | 20.17 | 20.08 | -0.09m | 39.1 | 35.9 | -3.2cm | 626 | 1,148.7 | 88% | Grade B |
-| `TLS-EXP-062` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 19.6m | -4.7° | 55.9° | 30.54 | 30.53 | -0.01m | 92.8 | 94.8 | +2cm | 9,921.9 | 18,206.7 | 95% | Grade A |
-| `TLS-EXP-063` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 14.9m | -6.1° | 55.2° | 23.01 | 22.8 | -0.21m | 57.4 | 59.5 | +2.1cm | 2,842.8 | 5,216.5 | 92% | Grade A |
-| `TLS-EXP-064` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 21.6m | -4.2° | 50.7° | 28.03 | 28.28 | +0.25m | 74.7 | 76.6 | +1.9cm | 5,496.4 | 10,085.9 | 91% | Grade A |
-| `TLS-EXP-065` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 24m | -3.8° | 49.1° | 29.27 | 29.5 | +0.23m | 79.7 | 80.4 | +0.7cm | 5,917 | 10,857.7 | 92% | Grade A |
-| `TLS-EXP-066` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 22.9m | -4° | 45.4° | 24.86 | 24.7 | -0.16m | 58.8 | 61 | +2.2cm | 2,296.9 | 4,214.8 | 90% | Grade A |
-| `TLS-EXP-067` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 22.5m | -4.1° | 52° | 30.45 | 30.58 | +0.13m | 83 | 82.3 | -0.7cm | 8,561.4 | 15,710.2 | 90% | Grade A |
-| `TLS-EXP-068` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 22.7m | -4° | 46.5° | 25.52 | 25.36 | -0.16m | 66.4 | 68.2 | +1.8cm | 3,998.4 | 7,337.1 | 91% | Grade A |
-| `TLS-EXP-069` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 14.3m | -6.4° | 49.9° | 18.61 | 18.5 | -0.11m | 37.1 | 37.8 | +0.7cm | 763.6 | 1,401.2 | 97% | Grade A |
-| `TLS-EXP-070` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 24m | -3.8° | 50.9° | 31.09 | 31.22 | +0.13m | 82.7 | 82.9 | +0.2cm | 4,504.8 | 8,266.3 | 95% | Grade A |
-| `TLS-EXP-071` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 19.4m | -4.7° | 42.7° | 19.51 | 19.52 | +0.01m | 34.2 | 33.6 | -0.6cm | 511.9 | 939.3 | 96% | Grade A |
-| `TLS-EXP-072` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 14.3m | -6.4° | 55.8° | 22.65 | 22.78 | +0.13m | 48.5 | 49.7 | +1.2cm | 1,132.8 | 2,078.7 | 91% | Grade A |
-| `TLS-EXP-073` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 20.7m | -4.4° | 54.9° | 31 | 30.89 | -0.11m | 92.7 | 93.8 | +1.1cm | 6,213.7 | 11,402.1 | 90% | Grade A |
-| `TLS-EXP-074` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 24m | -3.8° | 51.1° | 31.36 | 31.56 | +0.2m | 89.3 | 92.3 | +3cm | 9,727.5 | 17,850 | 89% | Grade B |
-| `TLS-EXP-075` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 16.4m | -5.6° | 44.1° | 17.47 | 17.43 | -0.04m | 36.9 | 34.5 | -2.4cm | 754.9 | 1,385.2 | 89% | Grade B |
-| `TLS-EXP-076` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 9m | -10.1° | 51.3° | 12.85 | 12.97 | +0.12m | 19.3 | 21.4 | +2.1cm | 213.1 | 391 | 91% | Grade A |
-| `TLS-EXP-077` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 21.9m | -4.2° | 44.8° | 23.36 | 23.21 | -0.15m | 62.9 | 59.5 | -3.4cm | 2,601.7 | 4,774.1 | 90% | Grade A |
-| `TLS-EXP-078` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 24m | -3.8° | 53.8° | 34.43 | 34.64 | +0.21m | 95.9 | 97 | +1.1cm | 7,901.6 | 14,499.4 | 90% | Grade A |
-| `TLS-EXP-079` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 21m | -4.4° | 44.3° | 22.11 | 22.01 | -0.1m | 43.5 | 41.7 | -1.8cm | 1,647.4 | 3,023 | 90% | Grade A |
-| `TLS-EXP-080` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 18.5m | -4.9° | 47.7° | 21.94 | 22.09 | +0.15m | 48.9 | 49.4 | +0.5cm | 1,862 | 3,416.8 | 93% | Grade A |
-| `TLS-EXP-081` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 14.1m | -6.5° | 56.8° | 23.13 | 22.92 | -0.21m | 56.9 | 56.9 | 0cm | 2,091.1 | 3,837.2 | 96% | Grade A |
-| `TLS-EXP-082` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 19.1m | -4.8° | 55.2° | 29.08 | 29.04 | -0.04m | 71.8 | 72.3 | +0.5cm | 3,213.8 | 5,897.3 | 94% | Grade A |
-| `TLS-EXP-083` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 16.7m | -5.5° | 57.1° | 27.41 | 27.24 | -0.17m | 66 | 65 | -1cm | 2,569.5 | 4,715 | 91% | Grade A |
-| `TLS-EXP-084` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 24m | -3.8° | 52.7° | 33.14 | 33.15 | +0.01m | 101 | 101.1 | +0.1cm | 6,533.6 | 11,989.2 | 94% | Grade A |
-| `TLS-EXP-085` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 14.7m | -6.2° | 55.1° | 22.67 | 22.48 | -0.19m | 47.7 | 45.9 | -1.8cm | 1,129.2 | 2,072.1 | 93% | Grade A |
-| `TLS-EXP-086` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 10.3m | -8.8° | 52.8° | 15.15 | 14.89 | -0.26m | 20.4 | 21 | +0.6cm | 259.7 | 476.5 | 90% | Grade A |
-| `TLS-EXP-087` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 20.4m | -4.5° | 47.5° | 23.87 | 23.95 | +0.08m | 59.5 | 60.4 | +0.9cm | 3,071.4 | 5,636 | 94% | Grade A |
-| `TLS-EXP-088` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 23.7m | -3.9° | 44.2° | 24.61 | 24.53 | -0.08m | 65.2 | 64.1 | -1.1cm | 3,378.7 | 6,199.9 | 92% | Grade A |
-| `TLS-EXP-089` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 20.8m | -4.4° | 54.5° | 30.75 | 31.02 | +0.27m | 93.4 | 94 | +0.6cm | 8,431.1 | 15,471.1 | 96% | Grade A |
-| `TLS-EXP-090` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 11m | -8.3° | 53.2° | 16.29 | 16.26 | -0.03m | 26.2 | 24.6 | -1.6cm | 259.5 | 476.2 | 94% | Grade A |
-| `TLS-EXP-091` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 13.6m | -6.7° | 47.3° | 16.34 | 16.3 | -0.04m | 30.4 | 31.6 | +1.2cm | 715.1 | 1,312.2 | 95% | Grade A |
-| `TLS-EXP-092` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 12.5m | -7.3° | 55.1° | 19.49 | 19.56 | +0.07m | 41.2 | 40.6 | -0.6cm | 1,127.5 | 2,069 | 96% | Grade A |
-| `TLS-EXP-093` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 24m | -3.8° | 53.1° | 33.54 | 33.91 | +0.37m | 94.7 | 95.7 | +1cm | 8,456.1 | 15,516.9 | 89% | Grade B |
-| `TLS-EXP-094` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 16.4m | -5.6° | 53.3° | 23.63 | 23.42 | -0.21m | 49.7 | 50.2 | +0.5cm | 1,278.2 | 2,345.5 | 93% | Grade A |
-| `TLS-EXP-095` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 10.6m | -8.6° | 56.2° | 17.45 | 17.56 | +0.11m | 32.6 | 31.6 | -1cm | 409.6 | 751.6 | 94% | Grade A |
-| `TLS-EXP-096` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 8.5m | -10.7° | 51.9° | 12.44 | 12.44 | 0m | 21.5 | 22 | +0.5cm | 127.9 | 234.7 | 97% | Grade A |
-| `TLS-EXP-097` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 17.2m | -5.3° | 43.1° | 17.68 | 17.55 | -0.13m | 29.1 | 28.6 | -0.5cm | 352.2 | 646.3 | 93% | Grade A |
-| `TLS-EXP-098` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 19.5m | -4.7° | 57.5° | 32.24 | 31.57 | -0.67m | 86.3 | 85.5 | -0.8cm | 8,380.3 | 15,377.9 | 87% | Grade B |
-| `TLS-EXP-099` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 23.1m | -4° | 44.9° | 24.64 | 24.68 | +0.04m | 62.6 | 61.6 | -1cm | 3,286.5 | 6,030.7 | 94% | Grade A |
-| `TLS-EXP-100` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 22.3m | -4.1° | 46° | 24.68 | 24.63 | -0.05m | 62.6 | 61.9 | -0.7cm | 3,168.6 | 5,814.4 | 92% | Grade A |
-| `TLS-EXP-101` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 12.9m | -7.1° | 53.9° | 19.31 | 19.56 | +0.25m | 33.6 | 33 | -0.6cm | 696.6 | 1,278.3 | 95% | Grade A |
-| `TLS-EXP-102` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 14.2m | -6.4° | 51.3° | 19.34 | 19.34 | 0m | 49.4 | 48.7 | -0.7cm | 1,165.6 | 2,138.9 | 95% | Grade A |
-| `TLS-EXP-103` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 24m | -3.8° | 52.6° | 33.03 | 32.97 | -0.06m | 93.8 | 93.4 | -0.4cm | 11,795 | 21,643.8 | 93% | Grade A |
-| `TLS-EXP-104` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 19.3m | -4.7° | 48.3° | 23.23 | 23.19 | -0.04m | 55.7 | 55.7 | 0cm | 2,467.9 | 4,528.6 | 93% | Grade A |
-| `TLS-EXP-105` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 24m | -3.8° | 48.5° | 28.71 | 28.89 | +0.18m | 75.7 | 75.3 | -0.4cm | 4,529.2 | 8,311.1 | 95% | Grade A |
-| `TLS-EXP-106` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 11.8m | -7.7° | 53.7° | 17.67 | 17.69 | +0.02m | 29 | 27.4 | -1.6cm | 298.1 | 547 | 91% | Grade A |
-| `TLS-EXP-107` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 18.3m | -5° | 52.2° | 25.18 | 25.05 | -0.13m | 58.9 | 57.9 | -1cm | 1,889.1 | 3,466.5 | 93% | Grade A |
-| `TLS-EXP-108` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 21m | -4.4° | 53.8° | 30.34 | 30.11 | -0.23m | 85 | 85.6 | +0.6cm | 4,298.3 | 7,887.4 | 93% | Grade A |
-| `TLS-EXP-109` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 21.6m | -4.2° | 43.8° | 22.34 | 22.52 | +0.18m | 49.4 | 49.2 | -0.2cm | 1,295.3 | 2,376.9 | 94% | Grade A |
-| `TLS-EXP-110` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 18.5m | -4.9° | 49.8° | 23.5 | 23.48 | -0.02m | 61.9 | 63 | +1.1cm | 3,458.5 | 6,346.3 | 91% | Grade A |
-| `TLS-EXP-111` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 22.2m | -4.1° | 45.5° | 24.21 | 24.11 | -0.1m | 58.8 | 57.5 | -1.3cm | 2,808.3 | 5,153.2 | 90% | Grade A |
-| `TLS-EXP-112` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 15.6m | -5.9° | 54.9° | 23.81 | 23.68 | -0.13m | 61.3 | 61.3 | 0cm | 2,991.8 | 5,490 | 93% | Grade A |
-| `TLS-EXP-113` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 20m | -4.6° | 55.7° | 30.95 | 31.01 | +0.06m | 83.5 | 84 | +0.5cm | 6,767 | 12,417.4 | 91% | Grade A |
-| `TLS-EXP-114` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 13.7m | -6.7° | 47.6° | 16.62 | 16.46 | -0.16m | 28.3 | 29.2 | +0.9cm | 366.9 | 673.3 | 95% | Grade A |
-| `TLS-EXP-115` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 24m | -3.8° | 48.8° | 29.04 | 29.42 | +0.38m | 83.5 | 84.5 | +1cm | 8,679.9 | 15,927.6 | 90% | Grade A |
-| `TLS-EXP-116` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 12.5m | -7.3° | 50.9° | 16.99 | 17.05 | +0.06m | 29.9 | 29.3 | -0.6cm | 521.6 | 957.1 | 91% | Grade A |
-| `TLS-EXP-117` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 17.6m | -5.2° | 47.9° | 21.07 | 20.89 | -0.18m | 49.6 | 49.1 | -0.5cm | 1,432.5 | 2,628.6 | 98% | Grade A |
-| `TLS-EXP-118` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 19m | -4.8° | 52.5° | 26.37 | 26.44 | +0.07m | 59.7 | 58 | -1.7cm | 1,907.4 | 3,500.1 | 91% | Grade A |
-| `TLS-EXP-119` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 21m | -4.4° | 53.7° | 30.24 | 30.44 | +0.2m | 82.4 | 82.3 | -0.1cm | 4,539.2 | 8,329.4 | 94% | Grade A |
-| `TLS-EXP-120` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 24m | -3.8° | 43.3° | 24.23 | 24.1 | -0.13m | 66.7 | 70.2 | +3.5cm | 2,348.5 | 4,309.5 | 90% | Grade A |
-| `TLS-EXP-121` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 15.4m | -5.9° | 50° | 19.93 | 19.9 | -0.03m | 46.1 | 47.6 | +1.5cm | 1,076.3 | 1,975 | 89% | Grade B |
-| `TLS-EXP-122` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 24m | -3.8° | 48.3° | 28.55 | 28.52 | -0.03m | 72.2 | 72.1 | -0.1cm | 5,441.1 | 9,984.4 | 97% | Grade A |
-| `TLS-EXP-123` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 24m | -3.8° | 52.8° | 33.25 | 32.92 | -0.33m | 98.1 | 98.7 | +0.6cm | 10,926.8 | 20,050.7 | 96% | Grade A |
-| `TLS-EXP-124` | Acer saccharum (Sugar Maple) | Temperate Mixed | 0.65 | 19.1m | -4.8° | 51.6° | 25.68 | 25.73 | +0.05m | 74 | 72 | -2cm | 4,441.4 | 8,150 | 93% | Grade A |
-| `TLS-EXP-125` | Betula pendula (Silver Birch) | Temperate Mixed | 0.61 | 9.5m | -9.6° | 49.8° | 12.84 | 12.93 | +0.09m | 18.1 | 18.2 | +0.1cm | 145.6 | 267.2 | 93% | Grade A |
-| `TLS-EXP-126` | Pseudotsuga menziesii (Douglas Fir) | Boreal Coniferous | 0.48 | 13m | -7° | 53.8° | 19.34 | 19.48 | +0.14m | 50.2 | 50.9 | +0.7cm | 1,279.6 | 2,348.1 | 92% | Grade A |
-| `TLS-EXP-127` | Eucalyptus globulus (Blue Gum) | Subtropical Plantation | 0.82 | 15.7m | -5.8° | 54.4° | 23.5 | 23.61 | +0.11m | 49.6 | 46.9 | -2.7cm | 2,219.1 | 4,072 | 87% | Grade B |
-| `TLS-EXP-128` | Tectona grandis (Teak) | Tropical Moist | 0.66 | 24m | -3.8° | 50.9° | 31.09 | 31.3 | +0.21m | 88.8 | 88.9 | +0.1cm | 8,237.5 | 15,115.8 | 93% | Grade A |
-| `TLS-EXP-129` | Swietenia macrophylla (Mahogany) | Tropical Rainforest | 0.54 | 9.6m | -9.5° | 53.6° | 14.6 | 14.88 | +0.28m | 29.2 | 28.2 | -1cm | 348.5 | 639.5 | 89% | Grade B |
-| `TLS-EXP-130` | Sequoia sempervirens (Coast Redwood) | Temperate Mixed | 0.41 | 24m | -3.8° | 46.3° | 26.71 | 26.85 | +0.14m | 66.7 | 66.8 | +0.1cm | 2,551 | 4,681.1 | 94% | Grade A |
-| `TLS-EXP-131` | Picea abies (Norway Spruce) | Boreal Coniferous | 0.43 | 12.1m | -7.5° | 54.7° | 18.71 | 18.6 | -0.11m | 40.6 | 42.5 | +1.9cm | 772.6 | 1,417.7 | 92% | Grade A |
-| `TLS-EXP-132` | Populus tremuloides (Quaking Aspen) | Temperate Mixed | 0.38 | 24m | -3.8° | 51.8° | 32.07 | 32.27 | +0.2m | 91.3 | 92.5 | +1.2cm | 5,350.3 | 9,817.8 | 92% | Grade A |
-| `TLS-EXP-133` | Pinus sylvestris (Scots Pine) | Boreal Coniferous | 0.45 | 24m | -3.8° | 46.6° | 27.01 | 27.04 | +0.03m | 69.1 | 69.5 | +0.4cm | 3,039.1 | 5,576.7 | 92% | Grade A |
-| `TLS-EXP-134` | Quercus robur (English Oak) | Temperate Deciduous | 0.72 | 19.9m | -4.6° | 48.2° | 23.83 | 24.11 | +0.28m | 54.7 | 57.3 | +2.6cm | 2,949.3 | 5,412 | 89% | Grade B |
-| `TLS-EXP-135` | Fagus sylvatica (European Beech) | Temperate Deciduous | 0.68 | 10.5m | -8.7° | 52.1° | 15.11 | 15.04 | -0.07m | 30.4 | 30.4 | 0cm | 510.6 | 937 | 95% | Grade A |
+- **Grade A (Optimal Field Capture)**: **91 cases (67.4%)** — Height error $< 2.5\%$ and DBH error $< 3.0\%$.
+- **Grade B (Nominal Field Capture)**: **34 cases (25.2%)** — Height error $< 5.0\%$ and DBH error $< 5.5\%$.
+- **Grade C (Sub-Optimal Field Capture)**: **10 cases (7.4%)** — Occlusions, crown overlap, or steep pitch angles ($|\theta| > 55^\circ$).
 
 ---
 
-## 4. Stratified Error & Uncertainty Breakdown
+## 2. Andhra Pradesh Native Tree Species & Wood Density Database
 
-### 4.1 Error Stratification by Forest Biome
-| Biome Classification | Tree Count | Mean Height RMSE | Mean DBH RMSE | Mean Confidence |
-| :--- | :---: | :---: | :---: | :---: |
-| Temperate Deciduous (Wytham Woods) | 23 | 0.18 m | 1.28 cm | 92.4% |
-| Temperate Mixed (Harvard Forest) | 34 | 0.20 m | 1.34 cm | 91.8% |
-| Boreal Coniferous (Black Rock Forest) | 34 | 0.19 m | 1.29 cm | 92.6% |
-| Tropical Rainforest (Barro Colorado) | 11 | 0.22 m | 1.38 cm | 90.5% |
-| Tropical Moist (Danum Valley) | 11 | 0.21 m | 1.35 cm | 91.2% |
-| Subtropical Plantation (Eucalyptus) | 11 | 0.17 m | 1.22 cm | 93.1% |
-| Mediterranean Woodland (Cazorla) | 11 | 0.20 m | 1.31 cm | 92.0% |
-
-### 4.2 Bland-Altman Limits of Agreement Analysis
-- **Height 95% Confidence Interval**: Bias = -0.001 m [-0.391, 0.389] m
-- **DBH 95% Confidence Interval**: Bias = 0.064 cm [-2.511, 2.639] cm
-- **Statistical Significance**: $p > 0.05$ (two-tailed paired t-test), validating zero statistically significant systematic bias across the instrument simulation.
+| Telugu Vernacular Name | Common English Name | Botanical Scientific Name | Family | Wood Specific Gravity ($\rho$) [g/cm³] | Typical Height (m) | Typical DBH (cm) | Endemic / Native Habitat in AP |
+| :--- | :--- | :--- | :--- | :---: | :---: | :---: | :--- |
+| **Vepa (వేప)** | Neem | *Azadirachta indica* | Meliaceae | **0.74** | 12 – 22 | 30 – 80 | Widespread rural, agroforestry & dry deciduous |
+| **Rakta Chandanam (రక్త చందనం)** | Red Sanders | *Pterocarpus santalinus* | Fabaceae | **1.05** | 8 – 18 | 22 – 60 | **Strictly Endemic** to Seshachalam Hills (Kadapa, Chittoor, Nellore) |
+| **Marri (మర్రి)** | Banyan | *Ficus benghalensis* | Moraceae | **0.56** | 16 – 30 | 70 – 200+ | Sacred groves, avenues, Kadiri reserve forest |
+| **Raavi (రావి)** | Sacred Fig / Peepal | *Ficus religiosa* | Moraceae | **0.52** | 18 – 32 | 50 – 140 | Riverine belts, temple forests, Eastern Ghats |
+| **Mamidi (మామిడి)** | Mango | *Mangifera indica* | Anacardiaceae | **0.65** | 12 – 24 | 35 – 90 | Chittoor / Krishna orchards & Eastern Ghats ravines |
+| **Chinta (చింత)** | Tamarind | *Tamarindus indica* | Fabaceae | **0.90** | 14 – 28 | 40 – 120 | Rayalaseema & coastal plains (high-density wood) |
+| **Usiri (ఉసిరి)** | Indian Gooseberry / Amla | *Phyllanthus emblica* | Phyllanthaceae | **0.72** | 8 – 16 | 20 – 48 | Nallamala & Tirumala dry deciduous slopes |
+| **Kanuga (కానుగ)** | Pongamia / Indian Beech | *Pongamia pinnata* | Fabaceae | **0.68** | 10 – 20 | 25 – 65 | Krishna & Godavari delta canals, riverbanks |
+| **Neredu (నేరేడు)** | Jamun / Black Plum | *Syzygium cumini* | Myrtaceae | **0.78** | 14 – 28 | 40 – 95 | Godavari valley, Papikonda & riparian forests |
+| **Tella Maddhi (తెల్ల మద్ది)** | Arjun Tree | *Terminalia arjuna* | Combretaceae | **0.84** | 18 – 34 | 55 – 140 | Krishna, Penna & Godavari riparian corridors |
+| **Panasa (పనస)** | Jackfruit | *Artocarpus heterophyllus* | Moraceae | **0.62** | 11 – 22 | 30 – 80 | Araku Valley & Ananthagiri tribal agency belt |
+| **Sitaphal (సీతాఫలం)** | Custard Apple | *Annona squamosa* | Annonaceae | **0.58** | 4 – 9 | 15 – 30 | Rocky Deccan scrub, Rayalaseema hill slopes |
+| **Teku (టేకు)** | Teak | *Tectona grandis* | Lamiaceae | **0.66** | 16 – 35 | 35 – 95 | Papikonda & Nallamala moist deciduous forests |
+| **Sarugudu (సరుగుడు)** | Casuarina | *Casuarina equisetifolia* | Casuarinaceae | **0.82** | 16 – 32 | 20 – 50 | Bapatla, Chirala & coastal shelterbelt plantations |
+| **Chandanam (చందనం)** | Indian Sandalwood | *Santalum album* | Santalaceae | **0.92** | 7 – 15 | 20 – 42 | Chittoor, Kadapa & Annamayya reserve forests |
+| **Ippa (ఇప్ప)** | Mahua / Butter Tree | *Madhuca longifolia* | Sapotaceae | **0.86** | 14 – 25 | 45 – 95 | Araku, Paderu & Rampachodavaram tribal areas |
+| **Nalla Thumma (నల్ల తుమ్మ)** | Babul / Gum Arabic | *Vachellia nilotica* | Fabaceae | **0.83** | 8 – 15 | 20 – 48 | Semi-arid scrub plains of Rayalaseema |
 
 ---
 
-## 5. Scientific References & Literature Citations
+## 3. Andhra Pradesh Field Research Sites
 
-1. **Chave, J., et al. (2014)**. *Improved allometric models to estimate the aboveground biomass of tropical trees*. Global Change Biology, 20(10), 3177-3190. DOI: `10.1111/gcb.12629`.
-2. **Zanne, A. E., et al. (2009)**. *Global wood density database*. Dryad Digital Repository. DOI: `10.5061/dryad.234`.
-3. **Feldpausch, T. R., et al. (2011)**. *Height-diameter allometry of tropical forest trees*. Biogeosciences, 8(5), 1081-1106.
-4. **Calders, K., et al. (2015)**. *Nondestructive estimates of above-ground biomass using terrestrial laser scanning in subtropical woodland*. Methods in Ecology and Evolution, 6(2), 198-208.
-5. **Haglöf Sweden AB (2020)**. *Vertex 5 Ultrasonic Hypsometer Operational Reference Manual for Forestry Cadastre*. Långsele, Sweden.
+1. **Seshachalam Biosphere Reserve (Tirupati / Kadapa)**: `13.6821° N, 79.3514° E` — Red Sanders endemic hotspot, steep rocky sandstone terrain.
+2. **Papikonda National Park (Godavari Valley / Rampa)**: `17.5214° N, 81.3812° E` — Tropical moist deciduous, dense Teak, Bamboo, and Jamun canopy.
+3. **Nallamala Forest Reserve (Srisailam)**: `16.0712° N, 78.8723° E` — Dry deciduous quartzite plateau, Arjun riparian corridors.
+4. **Araku Valley & Ananthagiri Hills (Visakhapatnam)**: `18.3312° N, 82.8741° E` — Highland agency tracts (900–1200m altitude), Jackfruit & Mahua orchards.
+5. **Coringa Mangrove & Estuarine Reserve (Kakinada)**: `16.8912° N, 82.2514° E` — Godavari delta coastal fringes, Pongamia & Casuarina shelterbelts.
+6. **Krishna River Basin Agro-Forestry Belt (Amaravati / Guntur)**: `16.5123° N, 80.6412° E` — Rich alluvial plains, commercial Mango, Neem & Tamarind stands.
+
+---
+
+## 4. Trigonometric & Allometric Mathematical Formulations
+
+### 4.1 Trigonometric Total Height via Phone Inclinometer
+From horizontal distance $D$ (measured via LiDAR / ToF sensor or optical pinhole scaling) and camera perspective height $h_{\text{cam}} = 1.50\text{ m}$:
+$$\theta_{\text{base}} = \arctan\left(-\frac{h_{\text{cam}}}{D}\right), \quad \theta_{\text{top}} = \arctan\left(\frac{H - h_{\text{cam}}}{D}\right)$$
+$$H_{\text{est}} = D \cdot \left[\tan(\theta_{\text{top}}) - \tan(\theta_{\text{base}})\right]$$
+
+### 4.2 Pantropical Biomass Equation (Chave et al., 2014)
+$$\text{AGB} = 0.0673 \times \left(\rho \times \text{DBH}^2 \times H\right)^{0.976}$$
+Where:
+- $\text{AGB}$: Above-Ground Biomass in dry kilograms ($\text{kg}$)
+- $\rho$: Wood specific gravity in $\text{g/cm}^3$ (dry mass / fresh volume)
+- $\text{DBH}$: Diameter at breast height ($1.30\text{ m}$) in centimeters ($\text{cm}$)
+- $H$: Total tree height in meters ($\text{m}$)
+
+### 4.3 Equivalent Atmospheric Carbon Dioxide Sequestered
+$$\text{Carbon} = \text{AGB} \times 0.50, \quad \text{CO}_2\text{ Eq} = \text{Carbon} \times \left(\frac{44}{12}\right) \approx \text{AGB} \times 1.8333\text{ kg}$$
+
+---
+
+## 5. Complete 135-Case Benchmark Dataset
+
+| Case ID | Species (Vernacular – Botanical) | Wood Density $\rho$ | Dist (m) | Base Ang (°) | Top Ang (°) | GT H (m) | Est H (m) | H Err (%) | GT DBH (cm) | Est DBH (cm) | DBH Err (%) | GT AGB (kg) | Est AGB (kg) | Est CO₂ (kg) | Conf | Grade | Site (Andhra Pradesh) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **TLS-AP-001** | Neem (Vepa) – Azadirachta indica | `0.74` | `20.2` | `-4.2` | `36.6` | `16.48` | `16.32` | `0.97%` | `42.2` | `43.5` | `3.08%` | `1150.1` | `1208.7` | `2216.0` | `0.85` | `Grade B` | Nallamala Forest Reserve |
+| **TLS-AP-002** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `11.7` | `-7.3` | `42.7` | `12.30` | `12.29` | `0.08%` | `51.4` | `51.1` | `0.58%` | `1787.5` | `1765.8` | `3237.3` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-003** | Banyan (Marri) – Ficus benghalensis | `0.56` | `18.2` | `-4.7` | `48.2` | `21.85` | `22.00` | `0.69%` | `73.5` | `73.6` | `0.14%` | `3408.3` | `3440.3` | `6307.2` | `0.88` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-004** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `6.4` | `-13.2` | `69.1` | `18.25` | `18.44` | `1.04%` | `78.8` | `79.1` | `0.38%` | `3046.8` | `3100.7` | `5684.6` | `0.94` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-005** | Mango (Mamidi) – Mangifera indica | `0.65` | `13.1` | `-6.5` | `49.1` | `16.63` | `16.71` | `0.48%` | `40.5` | `39.2` | `3.21%` | `943.5` | `889.5` | `1630.8` | `0.88` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-006** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `10.7` | `-8.0` | `61.6` | `21.25` | `21.42` | `0.80%` | `101.7` | `101.8` | `0.10%` | `9934.6` | `10031.3` | `18390.7` | `0.93` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-007** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `6.7` | `-12.6` | `50.8` | `9.71` | `9.58` | `1.34%` | `39.4` | `38.5` | `2.28%` | `584.4` | `551.3` | `1010.7` | `0.92` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-008** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `9.6` | `-8.9` | `55.1` | `15.28` | `15.38` | `0.65%` | `60.4` | `58.7` | `2.81%` | `1980.8` | `1885.4` | `3456.6` | `0.90` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-009** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `21.9` | `-3.9` | `48.5` | `26.26` | `26.24` | `0.08%` | `40.0` | `41.1` | `2.75%` | `1718.5` | `1810.6` | `3319.4` | `0.88` | `Grade A` | Papikonda National Park |
+| **TLS-AP-010** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `11.9` | `-7.2` | `63.4` | `25.24` | `24.92` | `1.27%` | `61.3` | `59.8` | `2.45%` | `4089.5` | `3848.2` | `7055.0` | `0.89` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-011** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `7.8` | `-10.9` | `53.3` | `11.98` | `12.27` | `2.42%` | `62.4` | `62.1` | `0.48%` | `1521.1` | `1542.5` | `2827.9` | `0.91` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-012** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `10.3` | `-8.3` | `31.8` | `7.88` | `7.64` | `3.05%` | `27.6` | `23.7` | `14.13%` | `192.7` | `138.8` | `254.5` | `0.85` | `Grade C` | Nallamala Forest Reserve |
+| **TLS-AP-013** | Teak (Teku) – Tectona grandis | `0.66` | `12.6` | `-6.8` | `53.5` | `18.53` | `18.60` | `0.38%` | `69.9` | `70.6` | `1.00%` | `3088.6` | `3160.8` | `5794.8` | `0.88` | `Grade A` | Papikonda National Park |
+| **TLS-AP-014** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `14.4` | `-5.9` | `56.8` | `23.52` | `23.24` | `1.19%` | `45.3` | `45.0` | `0.66%` | `2066.0` | `2015.6` | `3695.3` | `0.90` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-015** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `14.7` | `-5.8` | `38.2` | `13.08` | `13.24` | `1.22%` | `20.0` | `21.9` | `9.50%` | `264.3` | `319.3` | `585.4` | `0.88` | `Grade C` | Seshachalam Biosphere Reserve |
+| **TLS-AP-016** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `15.5` | `-5.5` | `49.9` | `19.88` | `19.90` | `0.10%` | `87.5` | `87.6` | `0.11%` | `6639.6` | `6660.9` | `12211.7` | `0.89` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-017** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `20.1` | `-4.3` | `23.5` | `10.23` | `10.46` | `2.25%` | `43.5` | `43.9` | `0.92%` | `857.0` | `891.6` | `1634.6` | `0.88` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-018** | Neem (Vepa) – Azadirachta indica | `0.74` | `9.7` | `-8.8` | `55.5` | `15.64` | `15.81` | `1.09%` | `67.3` | `66.3` | `1.49%` | `2718.0` | `2667.7` | `4890.8` | `0.91` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-019** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `11.3` | `-7.6` | `42.5` | `11.86` | `11.91` | `0.42%` | `28.0` | `26.1` | `6.79%` | `527.1` | `461.4` | `845.9` | `0.88` | `Grade C` | Seshachalam Biosphere Reserve |
+| **TLS-AP-020** | Banyan (Marri) – Ficus benghalensis | `0.56` | `15.6` | `-5.5` | `58.9` | `27.40` | `27.18` | `0.80%` | `87.5` | `87.0` | `0.57%` | `5974.4` | `5861.6` | `10746.3` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-021** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `18.1` | `-4.7` | `55.3` | `27.65` | `28.01` | `1.30%` | `100.0` | `101.0` | `1.00%` | `7276.6` | `7513.6` | `13774.9` | `0.88` | `Grade A` | Papikonda National Park |
+| **TLS-AP-022** | Mango (Mamidi) – Mangifera indica | `0.65` | `6.6` | `-12.8` | `71.3` | `20.95` | `21.24` | `1.38%` | `82.7` | `81.9` | `0.97%` | `4762.8` | `4736.4` | `8683.4` | `0.93` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-023** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `7.4` | `-11.5` | `70.2` | `22.08` | `22.67` | `2.67%` | `46.5` | `47.0` | `1.08%` | `2238.6` | `2345.4` | `4299.9` | `0.89` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-024** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `14.3` | `-6.0` | `35.1` | `11.54` | `11.72` | `1.56%` | `38.8` | `38.5` | `0.77%` | `671.2` | `671.2` | `1230.5` | `0.89` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-025** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `8.0` | `-10.6` | `59.0` | `14.80` | `14.59` | `1.42%` | `49.7` | `50.9` | `2.41%` | `1312.2` | `1355.7` | `2485.5` | `0.93` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-026** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `18.3` | `-4.7` | `54.0` | `26.73` | `26.97` | `0.90%` | `91.0` | `90.4` | `0.66%` | `8699.6` | `8663.2` | `15882.5` | `0.88` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-027** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `21.2` | `-4.0` | `54.9` | `31.66` | `32.13` | `1.48%` | `119.4` | `120.8` | `1.17%` | `18746.6` | `19455.9` | `35669.2` | `0.86` | `Grade A` | Papikonda National Park |
+| **TLS-AP-028** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `6.3` | `-13.4` | `67.7` | `16.87` | `16.73` | `0.83%` | `59.0` | `58.8` | `0.34%` | `1904.4` | `1876.5` | `3440.3` | `0.91` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-029** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `7.0` | `-12.1` | `30.0` | `5.54` | `5.49` | `0.90%` | `19.1` | `19.3` | `1.05%` | `66.6` | `67.4` | `123.6` | `0.90` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-030** | Teak (Teku) – Tectona grandis | `0.66` | `13.5` | `-6.3` | `58.5` | `23.53` | `23.77` | `1.02%` | `44.9` | `45.3` | `0.89%` | `1643.5` | `1688.9` | `3096.3` | `0.88` | `Grade A` | Papikonda National Park |
+| **TLS-AP-031** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `8.2` | `-10.4` | `70.2` | `24.29` | `23.85` | `1.81%` | `32.3` | `33.0` | `2.17%` | `1101.6` | `1128.4` | `2068.7` | `0.89` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-032** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `12.1` | `-7.1` | `44.7` | `13.48` | `13.54` | `0.45%` | `30.8` | `29.4` | `4.55%` | `632.3` | `579.9` | `1063.1` | `0.89` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-033** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `13.6` | `-6.3` | `52.1` | `18.99` | `19.57` | `3.05%` | `54.1` | `53.2` | `1.66%` | `2483.9` | `2475.5` | `4538.4` | `0.89` | `Grade B` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-034** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `20.2` | `-4.2` | `17.4` | `7.83` | `8.02` | `2.43%` | `30.0` | `29.9` | `0.33%` | `319.7` | `325.1` | `596.0` | `0.85` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-035** | Neem (Vepa) – Azadirachta indica | `0.74` | `8.2` | `-10.4` | `61.6` | `16.68` | `16.66` | `0.12%` | `38.0` | `37.9` | `0.26%` | `948.4` | `942.4` | `1727.7` | `0.94` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-036** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `12.4` | `-6.9` | `43.9` | `13.42` | `12.90` | `3.87%` | `35.4` | `35.8` | `1.13%` | `939.8` | `924.3` | `1694.6` | `0.90` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-037** | Banyan (Marri) – Ficus benghalensis | `0.56` | `17.0` | `-5.0` | `45.5` | `18.79` | `18.94` | `0.80%` | `169.0` | `171.0` | `1.18%` | `14942.9` | `15409.1` | `28250.0` | `0.88` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-038** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `18.1` | `-4.7` | `47.8` | `21.44` | `21.11` | `1.54%` | `92.2` | `92.8` | `0.65%` | `4844.7` | `4832.7` | `8859.9` | `0.90` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-039** | Mango (Mamidi) – Mangifera indica | `0.65` | `16.5` | `-5.2` | `34.1` | `12.67` | `13.04` | `2.92%` | `36.8` | `35.5` | `3.53%` | `600.2` | `575.4` | `1054.9` | `0.87` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-040** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `21.4` | `-4.0` | `42.8` | `21.32` | `21.97` | `3.05%` | `74.0` | `73.6` | `0.54%` | `5357.9` | `5459.2` | `10008.5` | `0.87` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-041** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `16.4` | `-5.2` | `37.1` | `13.91` | `14.19` | `2.01%` | `42.4` | `41.7` | `1.65%` | `957.8` | `945.4` | `1733.2` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-042** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `16.6` | `-5.2` | `35.6` | `13.40` | `13.35` | `0.37%` | `49.1` | `48.2` | `1.83%` | `1163.0` | `1117.7` | `2049.1` | `0.91` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-043** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `8.0` | `-10.6` | `68.6` | `21.95` | `22.47` | `2.37%` | `60.1` | `61.0` | `1.50%` | `3193.8` | `3363.8` | `6167.0` | `0.93` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-044** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `9.8` | `-8.7` | `65.6` | `23.13` | `22.81` | `1.38%` | `124.0` | `125.9` | `1.53%` | `14856.1` | `15097.1` | `27678.0` | `0.90` | `Grade A` | Papikonda National Park |
+| **TLS-AP-045** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `19.3` | `-4.4` | `42.2` | `18.97` | `18.90` | `0.37%` | `55.5` | `55.3` | `0.36%` | `1895.1` | `1875.1` | `3437.7` | `0.89` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-046** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `15.4` | `-5.6` | `18.8` | `6.75` | `6.81` | `0.89%` | `16.5` | `17.1` | `3.64%` | `60.7` | `65.6` | `120.3` | `0.86` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-047** | Teak (Teku) – Tectona grandis | `0.66` | `20.9` | `-4.1` | `45.0` | `22.40` | `22.01` | `1.74%` | `81.4` | `79.7` | `2.09%` | `5003.5` | `4719.9` | `8653.2` | `0.87` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-048** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `15.3` | `-5.6` | `59.8` | `27.82` | `27.93` | `0.40%` | `29.0` | `28.4` | `2.07%` | `1019.0` | `982.1` | `1800.5` | `0.91` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-049** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `18.3` | `-4.7` | `16.5` | `6.93` | `7.15` | `3.17%` | `21.9` | `21.8` | `0.46%` | `169.7` | `173.4` | `317.9` | `0.86` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-050** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `8.4` | `-10.1` | `61.3` | `16.84` | `17.05` | `1.25%` | `53.4` | `55.6` | `4.12%` | `2153.6` | `2358.5` | `4323.9` | `0.92` | `Grade B` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-051** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `11.2` | `-7.6` | `30.2` | `8.02` | `7.87` | `1.87%` | `26.7` | `27.9` | `4.49%` | `260.7` | `278.8` | `511.1` | `0.88` | `Grade B` | Nallamala Forest Reserve |
+| **TLS-AP-052** | Neem (Vepa) – Azadirachta indica | `0.74` | `7.5` | `-11.3` | `61.0` | `15.05` | `15.49` | `2.92%` | `69.3` | `69.3` | `0.00%` | `2771.9` | `2850.9` | `5226.7` | `0.93` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-053** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `11.0` | `-7.8` | `47.3` | `13.44` | `13.79` | `2.60%` | `35.1` | `34.4` | `1.99%` | `925.7` | `912.6` | `1673.1` | `0.92` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-054** | Banyan (Marri) – Ficus benghalensis | `0.56` | `13.8` | `-6.2` | `59.0` | `24.51` | `24.75` | `0.98%` | `155.5` | `156.5` | `0.64%` | `16462.8` | `16829.4` | `30853.9` | `0.91` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-055** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `21.4` | `-4.0` | `52.6` | `29.50` | `28.98` | `1.76%` | `103.9` | `102.5` | `1.35%` | `8352.5` | `7994.2` | `14656.0` | `0.86` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-056** | Mango (Mamidi) – Mangifera indica | `0.65` | `19.3` | `-4.4` | `41.4` | `18.49` | `17.97` | `2.81%` | `71.4` | `71.7` | `0.42%` | `3165.0` | `3103.4` | `5689.6` | `0.86` | `Grade B` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-057** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `13.7` | `-6.2` | `48.1` | `16.77` | `16.95` | `1.07%` | `68.5` | `67.9` | `0.88%` | `3645.6` | `3621.1` | `6638.7` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-058** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `18.9` | `-4.5` | `22.8` | `9.44` | `9.60` | `1.69%` | `41.5` | `42.9` | `3.37%` | `629.2` | `682.4` | `1251.1` | `0.86` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-059** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `8.1` | `-10.5` | `64.0` | `18.11` | `18.57` | `2.54%` | `52.2` | `54.1` | `3.64%` | `1758.6` | `1932.4` | `3542.7` | `0.91` | `Grade B` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-060** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `17.5` | `-4.9` | `38.1` | `15.20` | `14.85` | `2.30%` | `59.5` | `59.6` | `0.17%` | `2187.9` | `2145.8` | `3934.0` | `0.88` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-061** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `6.6` | `-12.8` | `75.7` | `27.46` | `27.00` | `1.68%` | `58.1` | `57.4` | `1.20%` | `3999.0` | `3841.7` | `7043.1` | `0.93` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-062** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `15.9` | `-5.4` | `44.7` | `17.22` | `17.54` | `1.86%` | `62.9` | `61.0` | `3.02%` | `2201.5` | `2111.2` | `3870.5` | `0.87` | `Grade B` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-063** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `16.0` | `-5.4` | `18.1` | `6.72` | `6.21` | `7.59%` | `17.7` | `16.5` | `6.78%` | `69.3` | `55.9` | `102.5` | `0.86` | `Grade C` | Seshachalam Biosphere Reserve |
+| **TLS-AP-064** | Teak (Teku) – Tectona grandis | `0.66` | `7.1` | `-11.9` | `73.2` | `24.95` | `25.35` | `1.60%` | `65.6` | `62.9` | `4.12%` | `3647.8` | `3413.0` | `6257.2` | `0.92` | `Grade B` | Papikonda National Park |
+| **TLS-AP-065** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `17.5` | `-4.9` | `48.3` | `21.16` | `21.36` | `0.95%` | `28.0` | `29.7` | `6.07%` | `728.5` | `824.9` | `1512.3` | `0.89` | `Grade C` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-066** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `15.8` | `-5.4` | `23.8` | `8.47` | `8.52` | `0.59%` | `26.2` | `26.1` | `0.38%` | `293.0` | `292.5` | `536.3` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-067** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `11.2` | `-7.6` | `55.0` | `17.52` | `17.32` | `1.14%` | `85.6` | `85.7` | `0.12%` | `5622.9` | `5573.0` | `10217.2` | `0.89` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-068** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `19.4` | `-4.4` | `27.5` | `11.60` | `11.49` | `0.95%` | `37.2` | `36.6` | `1.61%` | `713.9` | `685.2` | `1256.2` | `0.87` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-069** | Neem (Vepa) – Azadirachta indica | `0.74` | `7.5` | `-11.3` | `63.3` | `16.41` | `16.70` | `1.77%` | `39.6` | `38.1` | `3.79%` | `1011.7` | `954.4` | `1749.7` | `0.92` | `Grade B` | Nallamala Forest Reserve |
+| **TLS-AP-070** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `9.4` | `-9.1` | `51.8` | `13.44` | `13.68` | `1.79%` | `31.2` | `32.6` | `4.49%` | `735.5` | `815.3` | `1494.7` | `0.90` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-071** | Banyan (Marri) – Ficus benghalensis | `0.56` | `12.5` | `-6.8` | `60.1` | `23.27` | `23.14` | `0.56%` | `112.4` | `113.4` | `0.89%` | `8304.9` | `8403.7` | `15406.8` | `0.88` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-072** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `13.8` | `-6.2` | `61.0` | `26.38` | `26.19` | `0.72%` | `64.6` | `65.4` | `1.24%` | `2961.9` | `3012.6` | `5523.1` | `0.91` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-073** | Mango (Mamidi) – Mangifera indica | `0.65` | `8.5` | `-10.0` | `62.9` | `18.08` | `18.47` | `2.16%` | `47.8` | `46.4` | `2.93%` | `1414.8` | `1363.1` | `2499.0` | `0.90` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-074** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `19.2` | `-4.5` | `50.1` | `24.48` | `24.46` | `0.08%` | `100.8` | `98.7` | `2.08%` | `11209.6` | `10749.7` | `19707.8` | `0.87` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-075** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `9.5` | `-9.0` | `41.8` | `10.00` | `9.88` | `1.20%` | `35.2` | `34.3` | `2.56%` | `482.6` | `453.5` | `831.4` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-076** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `15.1` | `-5.7` | `46.9` | `17.62` | `17.53` | `0.51%` | `35.1` | `35.7` | `1.71%` | `789.0` | `811.5` | `1487.8` | `0.91` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-077** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `14.4` | `-5.9` | `58.0` | `24.57` | `24.80` | `0.94%` | `61.5` | `61.5` | `0.00%` | `3729.2` | `3763.3` | `6899.4` | `0.89` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-078** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `17.1` | `-5.0` | `57.7` | `28.60` | `28.56` | `0.14%` | `57.7` | `57.8` | `0.17%` | `4105.3` | `4113.5` | `7541.4` | `0.90` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-079** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `19.9` | `-4.3` | `37.6` | `16.82` | `17.42` | `3.57%` | `57.9` | `58.8` | `1.55%` | `1830.4` | `1952.0` | `3578.7` | `0.88` | `Grade B` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-080** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `20.7` | `-4.1` | `16.2` | `7.53` | `7.26` | `3.59%` | `21.8` | `23.2` | `6.42%` | `116.3` | `126.7` | `232.3` | `0.86` | `Grade C` | Nallamala Forest Reserve |
+| **TLS-AP-081** | Teak (Teku) – Tectona grandis | `0.66` | `11.4` | `-7.5` | `60.3` | `21.47` | `21.42` | `0.23%` | `79.6` | `80.0` | `0.50%` | `4595.6` | `4630.2` | `8488.7` | `0.89` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-082** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `13.6` | `-6.3` | `55.4` | `21.19` | `21.24` | `0.24%` | `43.6` | `45.0` | `3.21%` | `1731.7` | `1846.2` | `3384.7` | `0.89` | `Grade B` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-083** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `12.7` | `-6.7` | `29.9` | `8.81` | `8.70` | `1.25%` | `31.0` | `31.3` | `0.97%` | `422.8` | `425.5` | `780.1` | `0.89` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-084** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `14.9` | `-5.7` | `49.9` | `19.22` | `19.21` | `0.05%` | `62.3` | `64.6` | `3.69%` | `3310.3` | `3551.3` | `6510.7` | `0.88` | `Grade B` | Papikonda National Park |
+| **TLS-AP-085** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `18.7` | `-4.6` | `29.6` | `12.11` | `12.21` | `0.83%` | `29.5` | `30.5` | `3.39%` | `473.5` | `509.4` | `933.9` | `0.89` | `Grade B` | Nallamala Forest Reserve |
+| **TLS-AP-086** | Neem (Vepa) – Azadirachta indica | `0.74` | `13.1` | `-6.5` | `52.7` | `18.67` | `18.40` | `1.45%` | `34.2` | `35.0` | `2.34%` | `861.9` | `888.9` | `1629.6` | `0.90` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-087** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `18.4` | `-4.7` | `37.3` | `15.50` | `15.23` | `1.74%` | `26.6` | `26.3` | `1.13%` | `619.2` | `595.3` | `1091.4` | `0.87` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-088** | Banyan (Marri) – Ficus benghalensis | `0.56` | `10.1` | `-8.4` | `67.0` | `25.32` | `25.15` | `0.67%` | `125.6` | `125.9` | `0.24%` | `11201.0` | `11179.5` | `20495.8` | `0.90` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-089** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `12.6` | `-6.8` | `60.4` | `23.64` | `23.50` | `0.59%` | `84.1` | `84.8` | `0.83%` | `4453.6` | `4500.1` | `8250.2` | `0.92` | `Grade A` | Papikonda National Park |
+| **TLS-AP-090** | Mango (Mamidi) – Mangifera indica | `0.65` | `12.5` | `-6.8` | `53.7` | `18.50` | `18.51` | `0.05%` | `58.8` | `58.7` | `0.17%` | `2167.7` | `2161.7` | `3963.1` | `0.92` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-091** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `10.3` | `-8.3` | `54.7` | `16.04` | `15.88` | `1.00%` | `95.5` | `96.2` | `0.73%` | `6677.3` | `6707.2` | `12296.5` | `0.89` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-092** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `17.8` | `-4.8` | `19.0` | `7.62` | `7.70` | `1.05%` | `41.9` | `42.0` | `0.24%` | `520.1` | `527.9` | `967.8` | `0.87` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-093** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `20.0` | `-4.3` | `30.5` | `13.29` | `13.19` | `0.75%` | `56.5` | `55.4` | `1.95%` | `1517.4` | `1449.6` | `2657.6` | `0.86` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-094** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `10.0` | `-8.5` | `58.3` | `17.70` | `17.65` | `0.28%` | `66.0` | `65.6` | `0.61%` | `3107.9` | `3062.8` | `5615.1` | `0.91` | `Grade A` | Papikonda National Park |
+| **TLS-AP-095** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `19.4` | `-4.4` | `54.0` | `28.25` | `28.55` | `1.06%` | `56.5` | `55.0` | `2.65%` | `3893.2` | `3732.3` | `6842.6` | `0.89` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-096** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `15.4` | `-5.6` | `38.5` | `13.74` | `14.02` | `2.04%` | `57.8` | `56.1` | `2.94%` | `1497.4` | `1440.8` | `2641.5` | `0.90` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-097** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `15.9` | `-5.4` | `16.4` | `6.17` | `5.66` | `8.27%` | `16.3` | `15.8` | `3.07%` | `54.3` | `47.0` | `86.2` | `0.86` | `Grade C` | Nallamala Forest Reserve |
+| **TLS-AP-098** | Teak (Teku) – Tectona grandis | `0.66` | `8.1` | `-10.5` | `74.6` | `30.95` | `31.54` | `1.91%` | `47.5` | `46.2` | `2.74%` | `2397.1` | `2312.9` | `4240.3` | `0.91` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-099** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `21.4` | `-4.0` | `51.5` | `28.45` | `28.51` | `0.21%` | `28.8` | `29.1` | `1.04%` | `1027.6` | `1050.7` | `1926.3` | `0.87` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-100** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `18.6` | `-4.6` | `18.4` | `7.69` | `7.51` | `2.34%` | `20.9` | `20.3` | `2.87%` | `171.5` | `158.3` | `290.2` | `0.89` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-101** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `6.6` | `-12.8` | `64.4` | `15.29` | `15.55` | `1.70%` | `89.5` | `89.0` | `0.56%` | `5370.6` | `5400.4` | `9900.7` | `0.92` | `Grade A` | Papikonda National Park |
+| **TLS-AP-102** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `12.7` | `-6.7` | `42.0` | `12.94` | `12.96` | `0.15%` | `26.9` | `27.3` | `1.49%` | `421.9` | `434.8` | `797.1` | `0.91` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-103** | Neem (Vepa) – Azadirachta indica | `0.74` | `8.9` | `-9.6` | `63.6` | `19.41` | `19.23` | `0.93%` | `68.9` | `70.3` | `2.03%` | `3513.2` | `3620.8` | `6638.1` | `0.92` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-104** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `21.4` | `-4.0` | `32.7` | `15.23` | `14.98` | `1.64%` | `38.7` | `37.4` | `3.36%` | `1265.4` | `1164.8` | `2135.5` | `0.85` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-105** | Banyan (Marri) – Ficus benghalensis | `0.56` | `12.0` | `-7.1` | `53.7` | `17.81` | `18.06` | `1.40%` | `167.0` | `168.7` | `1.02%` | `13856.0` | `14326.2` | `26264.7` | `0.91` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-106** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `9.4` | `-9.1` | `70.5` | `28.09` | `28.48` | `1.39%` | `114.3` | `113.6` | `0.61%` | `9592.4` | `9606.5` | `17611.9` | `0.92` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-107** | Mango (Mamidi) – Mangifera indica | `0.65` | `11.3` | `-7.6` | `50.7` | `15.33` | `15.21` | `0.78%` | `50.8` | `50.5` | `0.59%` | `1356.3` | `1330.5` | `2439.3` | `0.92` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-108** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `9.9` | `-8.6` | `61.8` | `19.93` | `20.42` | `2.46%` | `88.0` | `87.4` | `0.68%` | `7035.7` | `7108.9` | `13033.0` | `0.91` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-109** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `10.7` | `-8.0` | `46.3` | `12.70` | `12.94` | `1.89%` | `24.1` | `25.0` | `3.73%` | `290.9` | `318.3` | `583.6` | `0.91` | `Grade B` | Nallamala Forest Reserve |
+| **TLS-AP-110** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `15.0` | `-5.7` | `32.8` | `11.16` | `11.26` | `0.90%` | `58.0` | `59.3` | `2.24%` | `1346.7` | `1418.6` | `2600.8` | `0.88` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-111** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `13.1` | `-6.5` | `50.4` | `17.31` | `17.77` | `2.66%` | `89.4` | `88.6` | `0.89%` | `5499.1` | `5543.5` | `10163.1` | `0.91` | `Grade B` | Papikonda National Park |
+| **TLS-AP-112** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `19.5` | `-4.4` | `53.2` | `27.57` | `27.77` | `0.73%` | `106.8` | `106.4` | `0.37%` | `13175.0` | `13171.4` | `24147.6` | `0.90` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-113** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `7.1` | `-11.9` | `63.5` | `15.77` | `15.64` | `0.82%` | `55.1` | `52.3` | `5.08%` | `1560.3` | `1397.9` | `2562.8` | `0.91` | `Grade B` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-114** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `12.3` | `-7.0` | `25.2` | `7.30` | `7.21` | `1.23%` | `16.4` | `17.0` | `3.66%` | `64.7` | `68.6` | `125.8` | `0.87` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-115** | Teak (Teku) – Tectona grandis | `0.66` | `10.5` | `-8.1` | `60.6` | `20.15` | `20.34` | `0.94%` | `65.6` | `66.8` | `1.83%` | `2961.1` | `3096.0` | `5676.0` | `0.90` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-116** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `10.2` | `-8.4` | `69.3` | `28.51` | `28.03` | `1.68%` | `42.3` | `42.4` | `0.24%` | `2180.7` | `2154.7` | `3950.3` | `0.89` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-117** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `14.1` | `-6.1` | `31.3` | `10.08` | `10.11` | `0.30%` | `32.9` | `32.2` | `2.13%` | `541.5` | `520.8` | `954.8` | `0.89` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-118** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `6.4` | `-13.2` | `72.7` | `22.08` | `22.50` | `1.90%` | `57.6` | `57.3` | `0.52%` | `3252.2` | `3278.9` | `6011.3` | `0.91` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-119** | Babul (Nalla Thumma) – Vachellia nilotica | `0.83` | `15.1` | `-5.7` | `39.9` | `14.12` | `13.49` | `4.46%` | `22.2` | `20.3` | `8.56%` | `315.8` | `253.6` | `464.9` | `0.86` | `Grade C` | Seshachalam Biosphere Reserve |
+| **TLS-AP-120** | Neem (Vepa) – Azadirachta indica | `0.74` | `9.2` | `-9.3` | `63.6` | `20.05` | `20.75` | `3.49%` | `32.6` | `32.2` | `1.23%` | `841.5` | `849.4` | `1557.2` | `0.89` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-121** | Red Sanders (Rakta Chandanam) – Pterocarpus santalinus | `1.05` | `13.8` | `-6.2` | `46.2` | `15.88` | `15.98` | `0.63%` | `31.4` | `30.3` | `3.50%` | `876.5` | `822.6` | `1508.1` | `0.89` | `Grade B` | Seshachalam Biosphere Reserve |
+| **TLS-AP-122** | Banyan (Marri) – Ficus benghalensis | `0.56` | `12.4` | `-6.9` | `63.3` | `26.12` | `25.90` | `0.84%` | `143.1` | `143.3` | `0.14%` | `14894.3` | `14812.2` | `27155.7` | `0.90` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-123** | Sacred Fig / Peepal (Raavi) – Ficus religiosa | `0.52` | `20.3` | `-4.2` | `44.5` | `21.46` | `21.66` | `0.93%` | `103.9` | `104.8` | `0.87%` | `6122.6` | `6283.2` | `11519.2` | `0.86` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-124** | Mango (Mamidi) – Mangifera indica | `0.65` | `7.3` | `-11.6` | `68.9` | `20.46` | `20.38` | `0.39%` | `79.5` | `79.3` | `0.25%` | `4309.0` | `4271.5` | `7831.1` | `0.90` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-125** | Tamarind (Chinta) – Tamarindus indica | `0.90` | `8.8` | `-9.7` | `56.6` | `14.86` | `14.81` | `0.34%` | `51.0` | `50.4` | `1.18%` | `1821.5` | `1774.0` | `3252.3` | `0.92` | `Grade A` | Krishna River Basin Agro-Forestry Belt |
+| **TLS-AP-126** | Indian Gooseberry / Amla (Usiri) – Phyllanthus emblica | `0.72` | `22.0` | `-3.9` | `20.1` | `9.55` | `9.74` | `1.99%` | `38.7` | `37.9` | `2.07%` | `555.2` | `543.4` | `996.2` | `0.86` | `Grade A` | Seshachalam Biosphere Reserve |
+| **TLS-AP-127** | Pongamia / Indian Beech (Kanuga) – Pongamia pinnata | `0.68` | `9.7` | `-8.8` | `44.1` | `10.91` | `11.13` | `2.02%` | `47.5` | `47.7` | `0.42%` | `892.0` | `917.0` | `1681.2` | `0.91` | `Grade A` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-128** | Jamun / Black Plum (Neredu) – Syzygium cumini | `0.78` | `10.9` | `-7.8` | `51.3` | `15.09` | `14.55` | `3.58%` | `79.8` | `79.0` | `1.00%` | `3853.1` | `3646.0` | `6684.3` | `0.88` | `Grade B` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-129** | Arjun Tree (Tella Maddhi) – Terminalia arjuna | `0.84` | `20.9` | `-4.1` | `39.7` | `18.83` | `18.75` | `0.42%` | `127.9` | `128.1` | `0.16%` | `12911.5` | `12897.2` | `23644.9` | `0.88` | `Grade A` | Papikonda National Park |
+| **TLS-AP-130** | Jackfruit (Panasa) – Artocarpus heterophyllus | `0.62` | `11.7` | `-7.3` | `58.2` | `20.37` | `20.30` | `0.34%` | `63.7` | `63.6` | `0.16%` | `2658.5` | `2641.5` | `4842.8` | `0.90` | `Grade A` | Araku Valley & Ananthagiri Hills |
+| **TLS-AP-131** | Custard Apple (Sitaphal) – Annona squamosa | `0.58` | `9.4` | `-9.1` | `21.5` | `5.20` | `4.89` | `5.96%` | `14.7` | `13.9` | `5.44%` | `37.5` | `31.7` | `58.1` | `0.89` | `Grade C` | Nallamala Forest Reserve |
+| **TLS-AP-132** | Teak (Teku) – Tectona grandis | `0.66` | `7.9` | `-10.8` | `65.6` | `18.95` | `19.42` | `2.48%` | `66.1` | `66.2` | `0.15%` | `2830.5` | `2907.6` | `5330.6` | `0.90` | `Grade A` | Nallamala Forest Reserve |
+| **TLS-AP-133** | Casuarina (Sarugudu) – Casuarina equisetifolia | `0.82` | `19.8` | `-4.3` | `53.4` | `28.18` | `28.52` | `1.21%` | `44.0` | `41.6` | `5.45%` | `2328.4` | `2111.5` | `3871.1` | `0.88` | `Grade B` | Coringa Estuarine & Mangrove Belt |
+| **TLS-AP-134** | Indian Sandalwood (Chandanam) – Santalum album | `0.92` | `11.0` | `-7.8` | `45.9` | `12.87` | `12.79` | `0.62%` | `25.7` | `27.3` | `6.23%` | `424.4` | `474.6` | `870.1` | `0.90` | `Grade C` | Seshachalam Biosphere Reserve |
+| **TLS-AP-135** | Mahua / Butter Tree (Ippa) – Madhuca longifolia | `0.86` | `21.5` | `-4.0` | `45.4` | `23.31` | `23.22` | `0.39%` | `45.8` | `45.8` | `0.00%` | `2191.9` | `2183.6` | `4003.3` | `0.87` | `Grade A` | Araku Valley & Ananthagiri Hills |
+
+---
+
+## 6. How to Load and Execute this Benchmark in PORTA-TLS
+
+1. Launch the web application via `npm run dev` and navigate to **PORTA-TLS** in your browser.
+2. Click **LOAD 135 BENCHMARK** in either the **INVENTORY LOG** toolbar or the **ACCURACY & FIELD VALIDATION** control panel.
+3. Observe:
+   - All 135 Andhra Pradesh testing cases populate into the Tree Registry.
+   - The validation engine automatically plots the **Measured vs. Ground Truth Linear Regression** ($R^2 = 0.9979$) and **Bland-Altman Error Residual Scatter Plot**.
+   - The Dashboard **BIOMASS ACCUMULATION BY SPECIES** bar chart renders the carbon distribution across Neem, Red Sanders, Banyan, Peepal, Mango, Tamarind, Arjun, and other Andhra Pradesh native species.
+4. Export the localized dataset as publication-ready **CSV** or **GeoJSON** with authentic GPS coordinates mapped directly to Andhra Pradesh forest reserves.
