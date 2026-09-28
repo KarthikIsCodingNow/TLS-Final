@@ -46,6 +46,7 @@ import {
 import { propagateBiomassUncertainty } from '../engines/errorEngine.js';
 import { processMultiFrameAveraging } from '../engines/validationEngine.js';
 import { compileResearchPayload, exportScientificCSV } from '../core/loggingEngine.js';
+import { loadBenchmarkIntoApp } from '../data/syntheticBenchmarkDataset.js';
 
 // Import Computer Vision Modules
 import { CVEngine } from '../cv/cvEngine.js';
@@ -199,6 +200,11 @@ export function initUIManager() {
   
   // Initialize Validation Mode persistent storage
   initValidationDatabase(state);
+
+  // Auto-load benchmark if registry is completely empty
+  if (!state.registry.trees || state.registry.trees.length === 0) {
+    loadBenchmarkIntoApp(state);
+  }
 
   // Initialize Invention Self-learning calibration DB
   initLearningDatabase();
@@ -2008,6 +2014,21 @@ function setupEventListeners() {
   // Table cleanups and exports
   DOM.btnExportCsv.addEventListener('click', exportInventoryToCSV);
   DOM.btnClearInventory.addEventListener('click', clearInventoryDatabase);
+
+  const handleLoadBenchmark = () => {
+    const count = loadBenchmarkIntoApp(state);
+    updateDashboardTelemetry();
+    renderInventoryTable();
+    updateValidationDashboard();
+    alert(`Successfully loaded ${count} simulated scientific benchmark records across 8 global biomes!`);
+  };
+
+  if (DOM.btnLoadBenchmark) {
+    DOM.btnLoadBenchmark.addEventListener('click', handleLoadBenchmark);
+  }
+  if (DOM.btnLoadBenchmarkVal) {
+    DOM.btnLoadBenchmarkVal.addEventListener('click', handleLoadBenchmark);
+  }
 
   // Close modal
   DOM.btnCloseModal.addEventListener('click', () => {

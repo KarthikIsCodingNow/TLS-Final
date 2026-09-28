@@ -1,5 +1,5 @@
 /**
- * PORTA-TLS Publication-Grade Canvas Plotter
+ * PORTA-TLS Publication-Grade Canvas Plotter (Flat Design Theme)
  * Version 2.0 Architectural Baseline
  */
 import { calculateRegressionMetrics, calculateBlandAltman } from './statisticsEngine.js';
@@ -15,11 +15,11 @@ export function drawRegressionPlot(canvas, appValues, gtValues, title, unit = 'm
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
 
-  // Styling system: Monochrome CAD Console style
-  ctx.fillStyle = '#0a0a0a';
+  // Styling system: Crisp Light Canvas Flat style
+  ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = '#222222';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#E5E7EB';
+  ctx.lineWidth = 2;
   ctx.strokeRect(0, 0, w, h);
 
   const padLeft = 55;
@@ -39,27 +39,26 @@ export function drawRegressionPlot(canvas, appValues, gtValues, title, unit = 'm
   const mapY = (val) => padTop + graphH - ((val - minVal) / (maxVal - minVal)) * graphH;
 
   // 2. Draw Gridlines & Axes
-  ctx.strokeStyle = '#181818';
+  ctx.strokeStyle = '#F3F4F6';
+  ctx.lineWidth = 1;
   ctx.beginPath();
   for (let val = 0; val <= maxVal; val += maxVal / 5) {
     const x = mapX(val);
     const y = mapY(val);
-    // Vertical grid
     ctx.moveTo(x, padTop); ctx.lineTo(x, padTop + graphH);
-    // Horizontal grid
     ctx.moveTo(padLeft, y); ctx.lineTo(padLeft + graphW, y);
   }
   ctx.stroke();
 
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#111827';
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(padLeft, padTop); ctx.lineTo(padLeft, padTop + graphH);
   ctx.moveTo(padLeft, padTop + graphH); ctx.lineTo(padLeft + graphW, padTop + graphH);
   ctx.stroke();
 
   // 3. Draw Perfect Agreement Diagonal line (y = x)
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.strokeStyle = '#9CA3AF';
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
   ctx.moveTo(mapX(0), mapY(0));
@@ -67,15 +66,16 @@ export function drawRegressionPlot(canvas, appValues, gtValues, title, unit = 'm
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // 4. Draw Scatter points
-  ctx.fillStyle = '#00ff66';
+  // 4. Draw Scatter points (Primary Blue)
+  ctx.fillStyle = '#3B82F6';
   for (let i = 0; i < appValues.length; i++) {
     const x = mapX(gtValues[i]);
     const y = mapY(appValues[i]);
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, 2 * Math.PI);
     ctx.fill();
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = '#2563EB';
+    ctx.lineWidth = 1;
     ctx.stroke();
   }
 
@@ -96,47 +96,49 @@ export function drawRegressionPlot(canvas, appValues, gtValues, title, unit = 'm
     intercept = (sumY - m * sumX) / n;
   }
 
-  ctx.strokeStyle = '#ffff00';
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = '#F59E0B'; // Amber trendline
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
   ctx.moveTo(mapX(0), mapY(intercept));
   ctx.lineTo(mapX(maxVal * 0.9), mapY(m * (maxVal * 0.9) + intercept));
   ctx.stroke();
 
   // 6. Draw labels
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '10px "Share Tech Mono"';
+  ctx.fillStyle = '#4B5563';
+  ctx.font = '600 11px "Outfit", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(`GROUND TRUTH (${unit})`, padLeft + graphW / 2, h - 8);
 
   ctx.save();
-  ctx.translate(12, padTop + graphH / 2);
+  ctx.translate(14, padTop + graphH / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.fillText(`APPLICATION VALUE (${unit})`, 0, 0);
   ctx.restore();
 
   // Legend and R^2 stats
   const reg = calculateRegressionMetrics(appValues, gtValues);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 11px "Rajdhani"';
+  ctx.fillStyle = '#111827';
+  ctx.font = 'bold 12px "Outfit", sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText(title.toUpperCase(), padLeft + 10, padTop + 15);
-  ctx.fillStyle = 'rgba(255,255,255,0.7)';
-  ctx.font = '10px "Share Tech Mono"';
-  ctx.fillText(`R² = ${reg.r2.toFixed(3)}`, padLeft + 10, padTop + 28);
-  ctx.fillText(`r  = ${reg.r.toFixed(3)} (Pearson)`, padLeft + 10, padTop + 38);
-  ctx.fillText(`y  = ${m.toFixed(2)}x + ${intercept.toFixed(2)}`, padLeft + 10, padTop + 48);
+  ctx.fillText(title.toUpperCase(), padLeft + 12, padTop + 16);
+  
+  ctx.fillStyle = '#4B5563';
+  ctx.font = '600 11px "JetBrains Mono", monospace';
+  ctx.fillText(`R² = ${reg.r2.toFixed(3)}`, padLeft + 12, padTop + 32);
+  ctx.fillText(`r  = ${reg.r.toFixed(3)}`, padLeft + 12, padTop + 46);
+  ctx.fillText(`y  = ${m.toFixed(2)}x + ${intercept.toFixed(2)}`, padLeft + 12, padTop + 60);
 
   // Draw axis tick values
-  ctx.fillStyle = '#888888';
+  ctx.fillStyle = '#6B7280';
+  ctx.font = '10px "JetBrains Mono", monospace';
   ctx.textAlign = 'right';
   for (let val = 0; val <= maxVal; val += maxVal / 4) {
-    ctx.fillText(val.toFixed(1), padLeft - 6, mapY(val) + 3);
+    ctx.fillText(val.toFixed(1), padLeft - 8, mapY(val) + 3);
   }
   
   ctx.textAlign = 'center';
   for (let val = 0; val <= maxVal; val += maxVal / 4) {
-    ctx.fillText(val.toFixed(1), mapX(val), padTop + graphH + 14);
+    ctx.fillText(val.toFixed(1), mapX(val), padTop + graphH + 16);
   }
 }
 
@@ -151,9 +153,10 @@ export function drawBlandAltmanPlot(canvas, appValues, gtValues, title, unit = '
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
 
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = '#222222';
+  ctx.strokeStyle = '#E5E7EB';
+  ctx.lineWidth = 2;
   ctx.strokeRect(0, 0, w, h);
 
   const padLeft = 55;
@@ -184,7 +187,7 @@ export function drawBlandAltmanPlot(canvas, appValues, gtValues, title, unit = '
   const mapY = (val) => padTop + graphH - ((val - minDiff) / (maxDiff - minDiff)) * graphH;
 
   // Draw central zero line
-  ctx.strokeStyle = '#222222';
+  ctx.strokeStyle = '#D1D5DB';
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(padLeft, mapY(0));
@@ -192,15 +195,16 @@ export function drawBlandAltmanPlot(canvas, appValues, gtValues, title, unit = '
   ctx.stroke();
 
   // Draw Bland-Altman mean Bias and Limits of Agreement
-  ctx.strokeStyle = '#00ffcc';
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = '#10B981'; // Emerald bias
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(padLeft, mapY(ba.bias));
   ctx.lineTo(padLeft + graphW, mapY(ba.bias));
   ctx.stroke();
 
-  ctx.strokeStyle = '#ff3366';
-  ctx.setLineDash([3, 3]);
+  ctx.strokeStyle = '#EF4444'; // Red limits
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(padLeft, mapY(ba.upperAgreementLimit));
   ctx.lineTo(padLeft + graphW, mapY(ba.upperAgreementLimit));
@@ -210,52 +214,54 @@ export function drawBlandAltmanPlot(canvas, appValues, gtValues, title, unit = '
   ctx.setLineDash([]);
 
   // Draw points
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#3B82F6';
   for (let i = 0; i < pts.length; i++) {
     const x = mapX(pts[i].avg);
     const y = mapY(pts[i].diff);
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, 2 * Math.PI);
     ctx.fill();
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = '#2563EB';
+    ctx.lineWidth = 1;
     ctx.stroke();
   }
 
   // Axes ticks
-  ctx.fillStyle = '#888888';
-  ctx.font = '8px "Share Tech Mono"';
+  ctx.fillStyle = '#6B7280';
+  ctx.font = '10px "JetBrains Mono", monospace';
   ctx.textAlign = 'right';
-  ctx.fillText(ba.upperAgreementLimit.toFixed(2), padLeft - 6, mapY(ba.upperAgreementLimit) + 3);
-  ctx.fillText(ba.bias.toFixed(2), padLeft - 6, mapY(ba.bias) + 3);
-  ctx.fillText(ba.lowerAgreementLimit.toFixed(2), padLeft - 6, mapY(ba.lowerAgreementLimit) + 3);
+  ctx.fillText(ba.upperAgreementLimit.toFixed(2), padLeft - 8, mapY(ba.upperAgreementLimit) + 3);
+  ctx.fillText(ba.bias.toFixed(2), padLeft - 8, mapY(ba.bias) + 3);
+  ctx.fillText(ba.lowerAgreementLimit.toFixed(2), padLeft - 8, mapY(ba.lowerAgreementLimit) + 3);
 
   ctx.textAlign = 'center';
   for (let val = 0; val <= maxAvg; val += maxAvg / 4) {
-    ctx.fillText(val.toFixed(1), mapX(val), padTop + graphH + 14);
+    ctx.fillText(val.toFixed(1), mapX(val), padTop + graphH + 16);
   }
 
   // Label text
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '10px "Share Tech Mono"';
+  ctx.fillStyle = '#4B5563';
+  ctx.font = '600 11px "Outfit", sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText(`MEAN OF MEASUREMENTS (${unit})`, padLeft + graphW / 2, h - 8);
 
   ctx.save();
-  ctx.translate(12, padTop + graphH / 2);
+  ctx.translate(14, padTop + graphH / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.fillText(`DIFFERENCE (APP - GT ${unit})`, 0, 0);
   ctx.restore();
 
   // Annotations
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 11px "Rajdhani"';
+  ctx.fillStyle = '#111827';
+  ctx.font = 'bold 12px "Outfit", sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText(title.toUpperCase(), padLeft + 10, padTop + 15);
-  ctx.fillStyle = '#ff3366';
-  ctx.font = '9px "Share Tech Mono"';
-  ctx.fillText(`+1.96 SD: ${ba.upperAgreementLimit.toFixed(3)}`, padLeft + 10, padTop + 27);
-  ctx.fillStyle = '#00ffcc';
-  ctx.fillText(`BIAS: ${ba.bias.toFixed(3)}`, padLeft + 10, padTop + 37);
-  ctx.fillStyle = '#ff3366';
-  ctx.fillText(`-1.96 SD: ${ba.lowerAgreementLimit.toFixed(3)}`, padLeft + 10, padTop + 47);
+  ctx.fillText(title.toUpperCase(), padLeft + 12, padTop + 16);
+  
+  ctx.fillStyle = '#DC2626';
+  ctx.font = '600 10px "JetBrains Mono", monospace';
+  ctx.fillText(`+1.96 SD: ${ba.upperAgreementLimit.toFixed(3)}`, padLeft + 12, padTop + 32);
+  ctx.fillStyle = '#059669';
+  ctx.fillText(`BIAS: ${ba.bias.toFixed(3)}`, padLeft + 12, padTop + 46);
+  ctx.fillStyle = '#DC2626';
+  ctx.fillText(`-1.96 SD: ${ba.lowerAgreementLimit.toFixed(3)}`, padLeft + 12, padTop + 60);
 }

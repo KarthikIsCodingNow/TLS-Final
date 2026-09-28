@@ -154,6 +154,7 @@ export const DOM = {
   // Tree Registry table
   get inventorySearch() { return document.getElementById('inventory-search'); },
   get speciesFilter() { return document.getElementById('species-filter'); },
+  get btnLoadBenchmark() { return document.getElementById('btn-load-benchmark'); },
   get btnExportCsv() { return document.getElementById('btn-export-csv'); },
   get btnClearInventory() { return document.getElementById('btn-clear-inventory'); },
   get inventoryTableBody() { return document.getElementById('inventory-table-body'); },
@@ -208,6 +209,7 @@ export const DOM = {
   get canvasRegression() { return document.getElementById('canvas-regression'); },
   get canvasBlandAltman() { return document.getElementById('canvas-bland-altman'); },
   
+  get btnLoadBenchmarkVal() { return document.getElementById('btn-load-benchmark-val'); },
   get btnExportValData() { return document.getElementById('btn-export-val-data'); },
   get btnPrintValReport() { return document.getElementById('btn-print-val-report'); },
   get btnClearValDb() { return document.getElementById('btn-clear-val-db'); },

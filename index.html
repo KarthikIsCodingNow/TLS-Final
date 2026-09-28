@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PORTA-TLS - CAD Scanner Prototype</title>
-  <!-- Google Fonts: Rajdhani & Share Tech Mono -->
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Vanilla CSS Stylesheet -->
   <link rel="stylesheet" href="styles.css">
   <!-- Chart.js for grayscale stats -->
@@ -100,22 +100,22 @@
           </button>
           <div class="header-title-container">
             <h1 id="page-title">TELEMETRY DASHBOARD</h1>
-            <p id="page-subtitle">Monochrome raw spatial forest logs.</p>
+            <p id="page-subtitle">Real-time LiDAR telemetry, biomass analysis, and forest cadastre.</p>
           </div>
         </div>
         <div class="header-actions">
-          <div class="validation-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-right: 15px; font-family: 'Share Tech Mono'; font-size: 13px; color: #ffffff;">
-            <span>VALIDATION MODE</span>
-            <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px;">
-              <input type="checkbox" id="chk-validation-mode" style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border: 1px solid var(--border-color); border-radius: 20px;"></span>
+          <div class="validation-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-right: 12px; font-size: 11px; font-weight: 700; color: var(--fg-main);">
+            <span>VALIDATION</span>
+            <label class="switch">
+              <input type="checkbox" id="chk-validation-mode">
+              <span class="slider"></span>
             </label>
           </div>
-          <div class="research-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-right: 15px; font-family: 'Share Tech Mono'; font-size: 13px; color: #ffffff;">
-            <span>RESEARCH MODE</span>
-            <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px;">
-              <input type="checkbox" id="chk-research-mode" style="opacity: 0; width: 0; height: 0;">
-              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border: 1px solid var(--border-color); border-radius: 20px;"></span>
+          <div class="research-toggle-container" style="display: flex; align-items: center; gap: 8px; margin-right: 12px; font-size: 11px; font-weight: 700; color: var(--fg-main);">
+            <span>RESEARCH</span>
+            <label class="switch">
+              <input type="checkbox" id="chk-research-mode">
+              <span class="slider"></span>
             </label>
           </div>
           <button id="add-tree-shortcut-btn" class="btn btn-primary">
@@ -127,9 +127,10 @@
 
       <!-- VIEW 1: DASHBOARD -->
       <section id="dashboard-view" class="view-section active">
-        <!-- Overview Stats Grid -->
+        <!-- Overview Stats Grid (Multi-Color Flat Cards) -->
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat-card stat-card-blue">
+            <div class="stat-icon-circle stat-icon-blue"><i data-lucide="trees"></i></div>
             <div class="stat-content">
               <span class="stat-label">SCANNED TREES</span>
               <h2 class="stat-value" id="stat-tree-count">0</h2>
@@ -137,7 +138,8 @@
             </div>
           </div>
           
-          <div class="stat-card">
+          <div class="stat-card stat-card-emerald">
+            <div class="stat-icon-circle stat-icon-emerald"><i data-lucide="scale"></i></div>
             <div class="stat-content">
               <span class="stat-label">TOTAL BIOMASS (AGB)</span>
               <h2 class="stat-value"><span id="stat-total-biomass">0.0</span> <span class="unit">kg</span></h2>
@@ -145,15 +147,17 @@
             </div>
           </div>
 
-          <div class="stat-card">
+          <div class="stat-card stat-card-amber">
+            <div class="stat-icon-circle stat-icon-amber"><i data-lucide="leaf"></i></div>
             <div class="stat-content">
               <span class="stat-label">CO₂ OFFSET</span>
               <h2 class="stat-value"><span id="stat-total-co2">0.0</span> <span class="unit">kg</span></h2>
-              <span class="stat-desc">Carbon dioxide equivalent absorbed</span>
+              <span class="stat-desc">Carbon absorption equivalent</span>
             </div>
           </div>
 
-          <div class="stat-card">
+          <div class="stat-card stat-card-indigo">
+            <div class="stat-icon-circle stat-icon-indigo"><i data-lucide="sparkles"></i></div>
             <div class="stat-content">
               <span class="stat-label">AVG CARBON DENSITY</span>
               <h2 class="stat-value"><span id="stat-avg-co2">0.0</span> <span class="unit">kg/tree</span></h2>
@@ -324,7 +328,7 @@
                   </div>
 
                   <!-- Guidance Coaching Banner -->
-                  <div class="hud-guidance-banner" id="hud-guidance-alerts" style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 0, 0.85); color: white; padding: 4px 10px; font-family: 'Share Tech Mono'; font-size: 11px; text-transform: uppercase; border-radius: 4px; pointer-events: none; display: none; box-shadow: 0 0 6px rgba(0,0,0,0.5); z-index: 10;">
+                  <div class="hud-guidance-banner" id="hud-guidance-alerts" style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 0, 0.85); color: white; padding: 4px 10px;  font-size: 11px; text-transform: uppercase; border-radius: 4px; pointer-events: none; display: none; box-shadow: 0 0 6px rgba(0,0,0,0.5); z-index: 10;">
                     HOLD STEADY
                   </div>
 
@@ -388,7 +392,7 @@
 
               <!-- Validation Ground Truth Inputs -->
               <div id="validation-gt-wrapper" style="display: none; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 12px;">
-                <h4 style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; margin: 0 0 6px 0; color: var(--accent-color);">GROUND TRUTH REFERENCES</h4>
+                <h4 style=" font-size: 13px; font-weight: 600; margin: 0 0 6px 0; color: var(--accent-color);">GROUND TRUTH REFERENCES</h4>
                 <div class="form-group">
                   <label for="val-gt-height">Manual Tape Height (m)</label>
                   <input type="number" id="val-gt-height" value="0.0" step="0.1" min="0.0" style="width:100%;">
@@ -587,7 +591,7 @@
 
             <!-- Task 8 Extension: Auto Caliper Snap Controls -->
             <div class="form-group" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-family: monospace; font-size: 11px; color: #ffffff;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-family: monospace; font-size: 11px; ">
                 <input type="checkbox" id="chk-auto-caliper-snap" checked>
                 <span>AUTOMATIC CALIPER SNAPPING (AI)</span>
               </label>
@@ -595,11 +599,11 @@
 
             <!-- Collapsible developer diagnostics panel -->
             <div class="diagnostics-wrapper" style="margin: 12px 16px; border-top: 1px dashed var(--border-color); padding-top: 12px;">
-              <h4 style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; margin: 0 0 6px 0; cursor: pointer; display: flex; justify-content: space-between;" id="toggle-diagnostics">
+              <h4 style=" font-size: 13px; font-weight: 600; margin: 0 0 6px 0; cursor: pointer; display: flex; justify-content: space-between;" id="toggle-diagnostics">
                 <span>SYSTEM DIAGNOSTICS</span>
                 <span id="diagnostics-chevron">[+]</span>
               </h4>
-              <div id="diagnostics-content" style="display: none; font-family: 'Share Tech Mono'; font-size: 11px; line-height: 1.5; color: var(--text-dimmed); background: rgba(255,255,255,0.02); padding: 8px; border: 1px solid var(--border-color); margin-top: 4px;">
+              <div id="diagnostics-content" style="display: none;  font-size: 11px; line-height: 1.5; color: var(--text-dimmed);  padding: 8px; border: 1px solid var(--border-color); margin-top: 4px;">
                 <div style="display: flex; justify-content: space-between;"><span>CAMERA FPS:</span><span id="diag-cam-fps">0</span></div>
                 <div style="display: flex; justify-content: space-between;"><span>INFERENCE FPS:</span><span id="diag-ai-fps">0</span></div>
                 <div style="display: flex; justify-content: space-between;"><span>RAW IMU TILT:</span><span id="diag-raw-pitch">0.0°</span></div>
@@ -615,13 +619,13 @@
                 <div style="display: flex; justify-content: space-between;"><span>ANGLE QUALITY:</span><span id="diag-angle-quality" style="color:var(--accent-color);">Green (Optimal)</span></div>
                 <div style="display: flex; justify-content: space-between;"><span>LIGHTING / SHARPNESS:</span><span id="diag-lighting-sharpness">Good / Sharp</span></div>
                 
-                <div style="border-top: 1px dashed var(--border-color); margin: 8px 0; padding-top: 8px; font-weight: bold; color: #ffffff;">VARIANCE SENSITIVITY BREAKDOWN</div>
+                <div style="border-top: 1px dashed var(--border-color); margin: 8px 0; padding-top: 8px; font-weight: bold; ">VARIANCE SENSITIVITY BREAKDOWN</div>
                 <div style="display: flex; justify-content: space-between;"><span>• DISTANCE ERROR:</span><span id="sens-dist-pct">48%</span></div>
                 <div style="display: flex; justify-content: space-between;"><span>• PITCH ANGLE ERROR:</span><span id="sens-pitch-pct">22%</span></div>
                 <div style="display: flex; justify-content: space-between;"><span>• OPTICS HFOV ERROR:</span><span id="sens-hfov-pct">17%</span></div>
                 <div style="display: flex; justify-content: space-between;"><span>• MANUAL ALIGNMENT:</span><span id="sens-align-pct">13%</span></div>
                 
-                <div style="border-top: 1px dashed var(--border-color); margin: 8px 0; padding-top: 8px; font-weight: bold; color: #ffffff;">VISUAL DEBUG OVERLAYS</div>
+                <div style="border-top: 1px dashed var(--border-color); margin: 8px 0; padding-top: 8px; font-weight: bold; ">VISUAL DEBUG OVERLAYS</div>
                 <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
                   <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 10px;">
                     <input type="checkbox" id="chk-dbg-quality-overlay" checked> <span>REAL-TIME QUALITY OVERLAY</span>
@@ -888,6 +892,10 @@
               <option value="Teak">Teak</option>
             </select>
             
+            <button class="btn btn-primary" id="btn-load-benchmark">
+              <i data-lucide="database"></i>
+              <span>LOAD 135 BENCHMARK</span>
+            </button>
             <button class="btn btn-secondary" id="btn-export-csv">
               <i data-lucide="download"></i>
               <span>EXPORT CSV</span>
@@ -933,20 +941,20 @@
 
       <!-- VIEW 5: CALIBRATION -->
       <section id="calibration-view" class="view-section">
-        <div class="card" style="max-width: 600px; margin: 20px auto; padding: 24px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.01);">
+        <div class="card" style="max-width: 600px; margin: 20px auto; padding: 24px; border: 1px solid var(--border-color); ">
           <div class="panel-header" style="border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
-            <h3 style="font-family: 'Rajdhani'; font-size: 20px; font-weight: 600; color: #ffffff;">CAMERA OPTICS CALIBRATION</h3>
+            <h3 style=" font-size: 20px; font-weight: 600; ">CAMERA OPTICS CALIBRATION</h3>
             <p style="font-size: 13px; color: var(--text-dimmed); margin-top: 4px;">Configure device-specific camera parameters to eliminate distance and diameter calculation errors.</p>
           </div>
           
           <form id="calibration-form" style="display: flex; flex-direction: column; gap: 16px;">
             <div class="input-grid-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
               <div class="form-group">
-                <label for="cal-hfov" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Horizontal Field of View (HFOV°)</label>
+                <label for="cal-hfov" style=" font-size: 13px; font-weight: 600;">Horizontal Field of View (HFOV°)</label>
                 <input type="number" id="cal-hfov" value="60.0" step="0.1" min="10.0" max="150.0" style="width: 100%;" required>
               </div>
               <div class="form-group">
-                <label for="cal-vfov" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Vertical Field of View (VFOV°)</label>
+                <label for="cal-vfov" style=" font-size: 13px; font-weight: 600;">Vertical Field of View (VFOV°)</label>
                 <input type="number" id="cal-vfov" value="45.0" step="0.1" min="10.0" max="150.0" style="width: 100%;" required>
               </div>
             </div>
@@ -955,22 +963,22 @@
 
             <div class="input-grid-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
               <div class="form-group">
-                <label for="cal-sensor-w" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Sensor Width (S_w mm)</label>
+                <label for="cal-sensor-w" style=" font-size: 13px; font-weight: 600;">Sensor Width (S_w mm)</label>
                 <input type="number" id="cal-sensor-w" value="6.00" step="0.01" min="1.0" max="50.0" style="width: 100%;" required>
               </div>
               <div class="form-group">
-                <label for="cal-sensor-h" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Sensor Height (S_h mm)</label>
+                <label for="cal-sensor-h" style=" font-size: 13px; font-weight: 600;">Sensor Height (S_h mm)</label>
                 <input type="number" id="cal-sensor-h" value="4.50" step="0.01" min="1.0" max="50.0" style="width: 100%;" required>
               </div>
             </div>
 
             <div class="input-grid-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
               <div class="form-group">
-                <label for="cal-focal-len" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Lens Focal Length (f mm)</label>
+                <label for="cal-focal-len" style=" font-size: 13px; font-weight: 600;">Lens Focal Length (f mm)</label>
                 <input type="number" id="cal-focal-len" value="4.00" step="0.01" min="0.5" max="100.0" style="width: 100%;" required>
               </div>
               <div class="form-group">
-                <label for="cal-camera-h" style="font-family: 'Rajdhani'; font-size: 13px; font-weight: 600;">Default Camera Height (m)</label>
+                <label for="cal-camera-h" style=" font-size: 13px; font-weight: 600;">Default Camera Height (m)</label>
                 <input type="number" id="cal-camera-h" value="1.5" step="0.05" min="0.5" max="3.0" style="width: 100%;" required>
               </div>
             </div>
@@ -981,8 +989,8 @@
             </div>
           </form>
 
-          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border-color); font-family: 'Share Tech Mono'; font-size: 11px; line-height: 1.6; color: var(--text-dimmed);">
-            <div style="color: #ffffff; font-weight: bold; margin-bottom: 4px;">* SCIENTIFIC OPTICAL PRINCIPLES</div>
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border-color);  font-size: 11px; line-height: 1.6; color: var(--text-dimmed);">
+            <div style=" font-weight: bold; margin-bottom: 4px;">* SCIENTIFIC OPTICAL PRINCIPLES</div>
             <div>• HFOV = 2 * arctan(S_w / 2f) * (180 / PI)</div>
             <div>• VFOV = 2 * arctan(S_h / 2f) * (180 / PI)</div>
             <div>• Image focal width px = Width_px / (2 * tan(HFOV / 2))</div>
@@ -991,23 +999,23 @@
 
           <!-- Task 7 Extension: 2-Meter Interactive FOV Projection Geometry Calibration Wizard Card -->
           <div class="card" style="padding: 16px; margin-top: 20px;">
-            <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">INTERACTIVE FOV CALIBRATION WIZARD</h3>
+            <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">INTERACTIVE FOV CALIBRATION WIZARD</h3>
             <div style="font-family: monospace; font-size: 11px; color: var(--text-dimmed); margin-bottom: 12px;">
               Follow the 4-step wizard to calibrate camera HFOV/VFOV optics at 2.0m distance.
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; font-family: monospace; font-size: 11px;">
               <div>
-                <label style="color:#ffffff;">STEP 1: DISTANCE</label>
-                <input type="number" id="wiz-dist" value="2.0" step="0.1" readonly style="width:100%; background:#000; color:#fff; border:1px solid var(--border-color); padding:4px;">
+                <label style="">STEP 1: DISTANCE</label>
+                <input type="number" id="wiz-dist" value="2.0" step="0.1" readonly style="width:100%;   border:1px solid var(--border-color); padding:4px;">
               </div>
               <div>
-                <label style="color:#ffffff;">STEP 2: TARGET W (m)</label>
-                <input type="number" id="wiz-width" value="1.15" step="0.01" style="width:100%; background:#000; color:#fff; border:1px solid var(--border-color); padding:4px;">
+                <label style="">STEP 2: TARGET W (m)</label>
+                <input type="number" id="wiz-width" value="1.15" step="0.01" style="width:100%;   border:1px solid var(--border-color); padding:4px;">
               </div>
               <div>
-                <label style="color:#ffffff;">STEP 2: TARGET H (m)</label>
-                <input type="number" id="wiz-height" value="0.83" step="0.01" style="width:100%; background:#000; color:#fff; border:1px solid var(--border-color); padding:4px;">
+                <label style="">STEP 2: TARGET H (m)</label>
+                <input type="number" id="wiz-height" value="0.83" step="0.01" style="width:100%;   border:1px solid var(--border-color); padding:4px;">
               </div>
               <div style="display:flex; align-items:flex-end;">
                 <button type="button" class="btn btn-primary" id="btn-run-fov-wizard" style="width:100%; font-size:10px; font-family:monospace; height:28px;">CALCULATE FOV</button>
@@ -1021,7 +1029,7 @@
 
           <!-- Task 7 Extension: IMU Sensor Flat Surface Zeroing & Noise Card -->
           <div class="card" style="padding: 16px; margin-top: 20px;">
-            <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">IMU SENSOR BIAS ZEROING & NOISE PROFILING</h3>
+            <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">IMU SENSOR BIAS ZEROING & NOISE PROFILING</h3>
             <div style="font-family: monospace; font-size: 11px; color: var(--text-dimmed); margin-bottom: 12px;">
               Place phone on a flat level surface and acquire 200 orientation samples to zero gyro/accel drift offsets.
             </div>
@@ -1035,13 +1043,13 @@
               </button>
             </div>
 
-            <div id="imu-bias-readout" style="font-family: monospace; font-size: 11px; background: rgba(255,255,255,0.02); padding: 10px; border: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+            <div id="imu-bias-readout" style="font-family: monospace; font-size: 11px;  padding: 10px; border: 1px solid var(--border-color); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
               <div>PITCH BIAS: <span id="bias-pitch-val" style="color:var(--accent-color);">0.000°</span></div>
               <div>ROLL BIAS: <span id="bias-roll-val" style="color:var(--accent-color);">0.000°</span></div>
               <div>COMPASS BIAS: <span id="bias-compass-val" style="color:var(--accent-color);">0.000°</span></div>
-              <div>σ PITCH NOISE: <span id="noise-pitch-val" style="color:#ffffff;">0.050°</span></div>
-              <div>σ ROLL NOISE: <span id="noise-roll-val" style="color:#ffffff;">0.050°</span></div>
-              <div>σ YAW NOISE: <span id="noise-yaw-val" style="color:#ffffff;">0.080°</span></div>
+              <div>σ PITCH NOISE: <span id="noise-pitch-val" style="">0.050°</span></div>
+              <div>σ ROLL NOISE: <span id="noise-roll-val" style="">0.050°</span></div>
+              <div>σ YAW NOISE: <span id="noise-yaw-val" style="">0.080°</span></div>
             </div>
           </div>
         </div>
@@ -1054,7 +1062,7 @@
           <!-- Column 1: Control Panel & Expedition Setup -->
           <div style="display: flex; flex-direction: column; gap: 20px;">
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">EXPEDITION CONFIGURATION</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">EXPEDITION CONFIGURATION</h3>
               <form id="expedition-form" style="display: flex; flex-direction: column; gap: 10px;">
                 <div class="form-group">
                   <label for="exp-project">Project Name</label>
@@ -1081,8 +1089,8 @@
 
             <!-- Ablation Studies Selection Card -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">CV ABLATION STUDY CONTROLS</h3>
-              <div style="display: flex; flex-direction: column; gap: 8px; font-family: 'Share Tech Mono'; font-size: 11px; color:#ffffff;">
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">CV ABLATION STUDY CONTROLS</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px;  font-size: 11px; ">
                 <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
                   <input type="checkbox" id="chk-abl-filter"> <span>DISABLE SENSOR FILTERS</span>
                 </label>
@@ -1103,40 +1111,44 @@
 
             <!-- Export Buttons -->
             <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-              <button class="btn btn-primary" id="btn-print-val-report" style="width: 100%; text-align: center; justify-content: center; height: 36px;">PRINT VALIDATION REPORT</button>
+              <button class="btn btn-primary" id="btn-load-benchmark-val" style="width: 100%; text-align: center; justify-content: center; height: 38px;">
+                <i data-lucide="database"></i>
+                <span>LOAD 135 BENCHMARK DATASET</span>
+              </button>
+              <button class="btn btn-secondary" id="btn-print-val-report" style="width: 100%; text-align: center; justify-content: center; height: 36px;">PRINT VALIDATION REPORT</button>
               <button class="btn btn-secondary" id="btn-export-val-data" style="width: 100%; text-align: center; justify-content: center; height: 36px;">EXPORT VALIDATION DATA JSON</button>
-              <button class="btn btn-secondary" id="btn-clear-val-db" style="width: 100%; text-align: center; justify-content: center; color: #ff3366; height: 36px;">PURGE VALIDATION DATABASE</button>
+              <button class="btn btn-danger" id="btn-clear-val-db" style="width: 100%; text-align: center; justify-content: center; height: 36px;">PURGE VALIDATION DATABASE</button>
             </div>
           </div>
 
           <!-- Column 2: Dashboard stats and canvas plots -->
           <div style="display: flex; flex-direction: column; gap: 20px;">
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">VALIDATION ACCURACY TELEMETRY</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">VALIDATION ACCURACY TELEMETRY</h3>
               
               <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;">
-                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                <div style="border: 1px solid var(--border-color); padding: 8px; ">
                   <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">Height RMSE</div>
                   <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 4px;" id="val-stat-rmse-height">0.00m</div>
                 </div>
-                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                <div style="border: 1px solid var(--border-color); padding: 8px; ">
                   <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">DBH RMSE</div>
                   <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 4px;" id="val-stat-rmse-dbh">0.0cm</div>
                 </div>
-                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                <div style="border: 1px solid var(--border-color); padding: 8px; ">
                   <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">Height Bias</div>
-                  <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: #ffffff; margin-top: 4px;" id="val-stat-bias-height">0.00m</div>
+                  <div style="font-size: 18px; font-weight: bold; font-family: monospace;  margin-top: 4px;" id="val-stat-bias-height">0.00m</div>
                 </div>
-                <div style="border: 1px solid var(--border-color); padding: 8px; background: rgba(255,255,255,0.01);">
+                <div style="border: 1px solid var(--border-color); padding: 8px; ">
                   <div style="font-size: 9px; color: var(--text-dimmed); text-transform: uppercase;">Scan Repeatability</div>
-                  <div style="font-size: 18px; font-weight: bold; font-family: monospace; color: #ffffff; margin-top: 4px;" id="val-stat-repeatability">0.0%</div>
+                  <div style="font-size: 18px; font-weight: bold; font-family: monospace;  margin-top: 4px;" id="val-stat-repeatability">0.0%</div>
                 </div>
               </div>
             </div>
 
             <!-- Publication quality charts canvases -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">SCIENTIFIC AGREEMENT PLOTS</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">SCIENTIFIC AGREEMENT PLOTS</h3>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
                 <div style="text-align: center;">
                   <div style="font-size: 10px; color: var(--text-dimmed); margin-bottom: 4px; font-family: monospace;">REGRESSION ANALYSIS</div>
@@ -1162,9 +1174,9 @@
             
             <!-- Patent Mode Activation Card -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">PATENT RUN RECORDER</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">PATENT RUN RECORDER</h3>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <span style="font-family: 'Share Tech Mono'; font-size: 12px; color: #ffffff;">ENABLE PATENT MODE STEP LOGGING</span>
+                <span style=" font-size: 12px; ">ENABLE PATENT MODE STEP LOGGING</span>
                 <label class="switch" style="position: relative; display: inline-block; width: 34px; height: 20px;">
                   <input type="checkbox" id="chk-patent-mode" style="opacity: 0; width: 0; height: 0;">
                   <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border: 1px solid var(--border-color); border-radius: 20px;"></span>
@@ -1175,8 +1187,8 @@
 
             <!-- Self-Calibration Learning Dashboard -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">SELF-LEARNING CAMERA STATS</h3>
-              <div id="learning-stats-readout" style="font-family: 'Share Tech Mono'; font-size: 12px; color: #ffffff; line-height: 1.6;">
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">SELF-LEARNING CAMERA STATS</h3>
+              <div id="learning-stats-readout" style=" font-size: 12px;  line-height: 1.6;">
                 • Learning Samples Capped: 0 scans<br>
                 • Height Bias Correction: 0.00%<br>
                 • DBH Bias Correction: 0.00%<br>
@@ -1186,7 +1198,7 @@
 
             <!-- Self-Diagnostics Readout -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">INSTRUMENT SELF-DIAGNOSTICS</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">INSTRUMENT SELF-DIAGNOSTICS</h3>
               <div id="diagnostics-status-list" style="display: flex; flex-direction: column; gap: 8px; font-family: monospace; font-size: 11px;">
                 <div style="border: 1px solid var(--border-color); padding: 8px;">
                   <div style="font-weight: bold; color: var(--accent-color);">IMU Sensor Stabilizer: STABLE</div>
@@ -1206,14 +1218,14 @@
             
             <!-- Inventions Scorecard & Explainability Trace -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ADAPTIVE FUSION EXPLAINER</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ADAPTIVE FUSION EXPLAINER</h3>
               
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center; background: rgba(255,255,255,0.01);">
+                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center; ">
                   <div style="font-size: 10px; color: var(--text-dimmed); font-family: monospace;">RELIABILITY INDEX (MRI)</div>
                   <div style="font-size: 28px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 6px;" id="mri-gauge">--</div>
                 </div>
-                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center; background: rgba(255,255,255,0.01);">
+                <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center; ">
                   <div style="font-size: 10px; color: var(--text-dimmed); font-family: monospace;">TREE COMPLETENESS (TCS)</div>
                   <div style="font-size: 28px; font-weight: bold; font-family: monospace; color: var(--accent-color); margin-top: 6px;" id="tcs-gauge">--%</div>
                 </div>
@@ -1226,16 +1238,16 @@
                 • Canopy: <span id="canopy-classifier-type" style="color: var(--accent-color); font-weight: bold;">UNKNOWN</span>
               </div>
 
-              <div id="explainability-list" style="font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 6px; color:#ffffff;">
+              <div id="explainability-list" style="font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 6px; ">
                 Run a laser scan to calculate fusion weights traces.
               </div>
             </div>
 
             <!-- Inventions Tech Docs Drawer -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ALGORITHM DISCLOSURES (PATENT DRAFTING)</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ALGORITHM DISCLOSURES (PATENT DRAFTING)</h3>
               
-              <div id="tech-docs-drawer" style="max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; color:#ffffff;">
+              <div id="tech-docs-drawer" style="max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 11px; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; ">
                 <!-- Dynamically loaded documentation lists -->
               </div>
             </div>
@@ -1260,12 +1272,12 @@
             
             <!-- User Role & Authentication Card -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ROLE-BASED AUTHENTICATION & SESSIONS</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">ROLE-BASED AUTHENTICATION & SESSIONS</h3>
               
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-family: monospace; font-size: 11px;">
                 <div>
                   <label style="color: var(--text-dimmed); display: block; margin-bottom: 4px;">USER ROLE:</label>
-                  <select id="sel-user-role" class="form-control" style="font-family: monospace; font-size: 11px; background: #000000; color: #ffffff; border: 1px solid var(--border-color); padding: 4px;">
+                  <select id="sel-user-role" class="form-control" style="font-family: monospace; font-size: 11px;   border: 1px solid var(--border-color); padding: 4px;">
                     <option value="RESEARCHER" selected>RESEARCHER (Full Write)</option>
                     <option value="ADMIN">ADMINISTRATOR (Full Access)</option>
                     <option value="FOREST_OFFICER">FOREST OFFICER (Field Scans)</option>
@@ -1275,7 +1287,7 @@
 
                 <div>
                   <label style="color: var(--text-dimmed); display: block; margin-bottom: 4px;">BIOMASS PLUGIN ENGINE:</label>
-                  <select id="sel-biomass-plugin" class="form-control" style="font-family: monospace; font-size: 11px; background: #000000; color: #ffffff; border: 1px solid var(--border-color); padding: 4px;">
+                  <select id="sel-biomass-plugin" class="form-control" style="font-family: monospace; font-size: 11px;   border: 1px solid var(--border-color); padding: 4px;">
                     <option value="FAO_GENERIC" selected>FAO Generic Model</option>
                     <option value="CONIFER">Conifer Taper Model</option>
                   </select>
@@ -1286,9 +1298,9 @@
             <!-- GIS Map Radar Card -->
             <div class="card" style="padding: 16px;">
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin-bottom: 12px;">
-                <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; margin: 0;">GIS SATELLITE MAP ENGINE</h3>
+                <h3 style=" font-size: 16px; font-weight: 600;  margin: 0;">GIS SATELLITE MAP ENGINE</h3>
                 <div style="display: flex; gap: 10px; align-items: center; font-family: monospace; font-size: 10px;">
-                  <select id="sel-gis-mode" style="background: #000000; color: #ffffff; border: 1px solid var(--border-color); font-size: 10px;">
+                  <select id="sel-gis-mode" style="  border: 1px solid var(--border-color); font-size: 10px;">
                     <option value="satellite" selected>Satellite View</option>
                     <option value="terrain">Terrain View</option>
                     <option value="street">Street Grid</option>
@@ -1299,7 +1311,7 @@
                 </div>
               </div>
 
-              <div style="width: 100%; height: 260px; background: #000000; border: 1px solid var(--border-color); position: relative;">
+              <div style="width: 100%; height: 260px;  border: 1px solid var(--border-color); position: relative;">
                 <canvas id="gis-map-canvas" width="600" height="260" style="width: 100%; height: 100%; display: block;"></canvas>
               </div>
             </div>
@@ -1311,7 +1323,7 @@
             
             <!-- Sync Status Card -->
             <div class="card" style="padding: 16px;">
-              <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">OFFLINE SYNC TELEMETRY</h3>
+              <h3 style=" font-size: 16px; font-weight: 600;  border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin: 0 0 12px 0;">OFFLINE SYNC TELEMETRY</h3>
               
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-family: monospace; font-size: 11px;">
                 <div style="border: 1px solid var(--border-color); padding: 10px; text-align: center;">
@@ -1332,11 +1344,11 @@
             <!-- Audit Log Terminal Card -->
             <div class="card" style="padding: 16px;">
               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin-bottom: 12px;">
-                <h3 style="font-family: 'Rajdhani'; font-size: 16px; font-weight: 600; color: #ffffff; margin: 0;">SECURITY AUDIT LOG CONSOLE</h3>
+                <h3 style=" font-size: 16px; font-weight: 600;  margin: 0;">SECURITY AUDIT LOG CONSOLE</h3>
                 <button class="btn btn-secondary" id="btn-export-audit-logs" style="font-size: 9px; padding: 2px 8px; font-family: monospace;">EXPORT CSV</button>
               </div>
 
-              <div id="audit-console-output" style="background: #000000; border: 1px solid var(--border-color); padding: 10px; font-family: monospace; font-size: 10px; color: var(--accent-color); height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+              <div id="audit-console-output" style=" border: 1px solid var(--border-color); padding: 10px; font-family: monospace; font-size: 10px; color: var(--accent-color); height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
                 <div>[SYSTEM] Audit Logger initialized. IndexedDB active.</div>
               </div>
             </div>
