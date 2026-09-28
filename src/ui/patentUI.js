@@ -109,7 +109,7 @@ export class PatentUI {
             <p style="margin: 4px 0 0 0; color: #888; font-size: 0.8rem;">Draft structured patent specification, equations, novel claims, and flow charts.</p>
           </div>
           <button id="btn-export-patent-doc" style="background: #00d2ff; color: #000; font-weight: bold; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer;">
-            DOWNLOAD PATENT SPECIFICATION DRAFT (.MD)
+            DOWNLOAD PATENT SPECIFICATION DRAFT (.TXT)
           </button>
         </div>
       </div>
@@ -132,12 +132,12 @@ export class PatentUI {
     const btnExport = container.querySelector('#btn-export-patent-doc');
     if (btnExport) {
       btnExport.addEventListener('click', () => {
-        const patentMd = this.patentDocEngine.generatePatentDocument();
-        const blob = new Blob([patentMd], { type: 'text/markdown' });
+        const patentText = this.patentDocEngine.generatePatentDocument();
+        const blob = new Blob([patentText], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `PORTA_TLS_Patent_Specification_${new Date().toISOString().split('T')[0]}.md`;
+        a.download = `PORTA_TLS_Patent_Specification_Karthik_Vijayawada_${new Date().toISOString().split('T')[0]}.txt`;
         a.click();
         URL.revokeObjectURL(url);
       });

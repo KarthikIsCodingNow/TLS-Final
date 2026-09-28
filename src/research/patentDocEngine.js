@@ -19,7 +19,9 @@ export class PatentDocEngine {
 
 **TITLE OF INVENTION**: PORTABLE TOPOGRAPHIC OPTICAL LASER SCANNING (PORTA-TLS) SYSTEM AND PROPRIETARY 13-STAGE MULTI-METHOD CONFIDENCE FUSION MEASUREMENT ENGINE FOR FORESTRY METRICS
 
-**INVENTOR(S)**: PORTA-TLS Research & Engineering Team
+**LEAD INVENTOR & OPERATOR**: Karthik
+**LOCATION / JURISDICTION**: Vijayawada, Krishna District, Andhra Pradesh, India (16.506° N, 80.648° E)
+**FIELD VALIDATION BED**: Krishna River Basin & Kondapalli Forest Reserve, Vijayawada
 **DATE**: ${dateStr}
 
 ---
